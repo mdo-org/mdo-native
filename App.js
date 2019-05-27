@@ -1,17 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import key from "weak-key";
-
-// TODO: for some reason, the following code does not work:
-// ```
-// import MDo from "@mdo-org/mdo-core/lib/strings"
-// ```
-// So, I'm currently doing the following ugly hack:
-//   1. on package.json:
-//     "prestart": "cp ./node_modules/@mdo-org/mdo-core/lib/strings/index.js ./mdo-core.js"
-//   2. importing from ./mdo-core.js
-import MDo from "./mdo-core";
-
+import MDo from "@mdo-org/mdo-core/lib/strings/index";
 import Block from "./src/components/Block";
 
 const styles = StyleSheet.create({
@@ -53,7 +43,9 @@ export default class App extends React.Component {
   }
 
   parseFile() {
-    MDo.parse(initialText).then(blocks => this.setState({ blocks }));
+    MDo.parse(initialText)
+      .then(blocks => this.setState({ blocks }))
+      .catch(err => console.error(err));
   }
 
   /* eslint react/destructuring-assignment:[0] */
