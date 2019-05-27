@@ -1,13 +1,14 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
+    "@mdo-org/mdo-core": "^0.2.9",
     "expo": "^32.0.0",
     "prop-types": "^15.7.2",
     "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "weak-key": "^1.0.1"
   },
   "devDependencies": {
-    "@mdo-org/mdo-core": "^0.2.5",
     "babel-preset-expo": "^5.0.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
@@ -23,6 +24,7 @@
     "prettier": "^1.17.1"
   },
   "scripts": {
+    "prestart": "cp ./node_modules/@mdo-org/mdo-core/lib/strings/index.js ./mdo-core.js",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
