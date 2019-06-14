@@ -1,8 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import key from "weak-key";
-import MDo from "@mdo-org/mdo-core/lib/strings/index";
-import Block from "./src/components/Block";
+import { Dropbox } from "dropbox";
+import FileNavigator from "./src/components/FileNavigator";
+import File from "./src/components/File";
+
+const DIRPATH = "/todo/";
+const FILEPATH = "/todo/home.md";
 
 const styles = StyleSheet.create({
   container: {
@@ -13,49 +16,55 @@ const styles = StyleSheet.create({
   }
 });
 
-const initialText = `
-Hello MDo.
-
-# Work
-- [ ] Spreadsheet all the things
-  @start tomorrow
-
-# Home
-Tasks I plan to work on when I'm done with work.
-
-- [X] Take out trash
-- [ ] Fix the basement light
-  Not sure what's going on.
-
-  Faulty light bulb?
-`.trim();
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      blocks: []
+      dropbox: new Dropbox({
+        fetch: global.fetch,
+        accessToken: "ADD_YOUR_ACCESS_TOKEN_HERE"
+      }),
+      dirpath: DIRPATH,
+      filepath: "",
+      loading: false,
+      error: null
     };
   }
 
-  componentDidMount() {
-    this.parseFile();
+  renderLoading() {
+    const { loading } = this.state;
+    if (!loading) return null;
+    return <Text>Loading...</Text>;
   }
 
-  parseFile() {
-    MDo.parse(initialText)
-      .then(blocks => this.setState({ blocks }))
-      .catch(err => console.error(err));
+  renderError() {
+    const { error } = this.state;
+    if (!error) return null;
+    return <Text>{error.message}</Text>;
   }
 
-  /* eslint react/destructuring-assignment:[0] */
+  renderContent() {
+    const { loading, error, filepath } = this.state;
+    if (loading || error) return null;
+    return filepath ? this.renderFile() : this.renderFileNavigator();
+  }
+
+  renderFile() {
+    const { dropbox, filepath } = this.state;
+    return <File dropbox={dropbox} path={filepath} />;
+  }
+
+  renderFileNavigator() {
+    const { dropbox, dirpath } = this.state;
+    return <FileNavigator dropbox={dropbox} path={dirpath} />;
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>MDo Native</Text>
-        {this.state.blocks.map(block => (
-          <Block key={key(block)} block={block} />
-        ))}
+        {this.renderLoading()}
+        {this.renderError()}
+        {this.renderContent()}
       </View>
     );
   }
