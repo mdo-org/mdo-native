@@ -1,12 +1,13 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropbox } from "dropbox";
+import * as Storage from "./src/Storage";
 import DropboxLogin from "./src/components/DropboxLogin";
 import FileNavigator from "./src/components/FileNavigator";
 import File from "./src/components/File";
 
 const DIRPATH = "/todo/";
-const FILEPATH = "/todo/home.md";
+// const FILEPATH = "/todo/home.md";
 
 const styles = StyleSheet.create({
   container: {
@@ -29,13 +30,36 @@ export default class App extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.loadFromStorage();
+  }
+
   newDropbox(accessToken) {
+    Storage.setDropboxToken(accessToken);
     this.setState({
       dropbox: new Dropbox({
         fetch: global.fetch,
         accessToken
       })
     });
+  }
+
+  async loadFromStorage() {
+    const { loading } = this.state;
+    if (loading) return;
+
+    this.setState({ loading: true, error: null });
+    const dropboxToken = await Storage.getDropboxToken();
+    this.setState({ loading: false });
+
+    if (dropboxToken) {
+      this.newDropbox(dropboxToken);
+    }
+  }
+
+  logout() {
+    Storage.deleteDropboxToken();
+    this.setState({ dropbox: null });
   }
 
   renderLoading() {
@@ -70,7 +94,13 @@ export default class App extends React.Component {
 
   renderFileNavigator() {
     const { dropbox, dirpath } = this.state;
-    return <FileNavigator dropbox={dropbox} path={dirpath} />;
+    return (
+      <FileNavigator
+        dropbox={dropbox}
+        path={dirpath}
+        onLogout={() => this.logout()}
+      />
+    );
   }
 
   render() {

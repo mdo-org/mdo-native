@@ -5,21 +5,14 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableHighlight } from "react-native";
+import FileRow from "./FileRow";
 
-const FileRow = ({ file }) => {
-  return (
-    <View>
-      <Text>{file.name}.</Text>
-    </View>
-  );
-};
-
-FileRow.propTypes = {
-  file: PropTypes.shape({
-    name: PropTypes.string.isRequired
-  }).isRequired
-};
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row"
+  }
+});
 
 export default class FileNavigator extends React.Component {
   constructor(props) {
@@ -77,10 +70,14 @@ export default class FileNavigator extends React.Component {
   }
 
   render() {
+    const { onLogout } = this.props;
     return (
       <View>
-        <View>
-          <Text>Dropbox</Text>
+        <View style={styles.header}>
+          <Text>Dropbox | </Text>
+          <TouchableHighlight onPress={onLogout} underlayColor="red">
+            <Text>Logout</Text>
+          </TouchableHighlight>
         </View>
         {this.renderLoading()}
         {this.renderError()}
@@ -94,5 +91,6 @@ FileNavigator.propTypes = {
   dropbox: PropTypes.shape({
     filesListFolder: PropTypes.func.isRequired
   }).isRequired,
-  path: PropTypes.string.isRequired
+  path: PropTypes.string.isRequired,
+  onLogout: PropTypes.func.isRequired
 };
