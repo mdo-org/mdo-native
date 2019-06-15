@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropbox } from "dropbox";
+import DropboxLogin from "./src/components/DropboxLogin";
 import FileNavigator from "./src/components/FileNavigator";
 import File from "./src/components/File";
 
@@ -20,15 +21,21 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dropbox: new Dropbox({
-        fetch: global.fetch,
-        accessToken: "ADD_YOUR_ACCESS_TOKEN_HERE"
-      }),
+      dropbox: null,
       dirpath: DIRPATH,
       filepath: "",
       loading: false,
       error: null
     };
+  }
+
+  newDropbox(accessToken) {
+    this.setState({
+      dropbox: new Dropbox({
+        fetch: global.fetch,
+        accessToken
+      })
+    });
   }
 
   renderLoading() {
@@ -44,9 +51,16 @@ export default class App extends React.Component {
   }
 
   renderContent() {
-    const { loading, error, filepath } = this.state;
+    const { dropbox, loading, error, filepath } = this.state;
     if (loading || error) return null;
+    if (!dropbox) {
+      return this.renderDropboxLogin();
+    }
     return filepath ? this.renderFile() : this.renderFileNavigator();
+  }
+
+  renderDropboxLogin() {
+    return <DropboxLogin onLogin={token => this.newDropbox(token)} />;
   }
 
   renderFile() {
