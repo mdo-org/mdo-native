@@ -5,14 +5,10 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { StyleSheet, Text, View, TouchableHighlight } from "react-native";
+import { Text } from "react-native-paper";
+import { View } from "react-native";
 import FileRow from "./FileRow";
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row"
-  }
-});
+import NavigationHeader from "../NavigationHeader";
 
 export default class FileNavigator extends React.Component {
   constructor(props) {
@@ -77,16 +73,24 @@ export default class FileNavigator extends React.Component {
     );
   }
 
+  renderHeader() {
+    const { path, onGoBack, onLogout } = this.props;
+    const isRoot = path === "" || path === "/";
+    const subtitle = isRoot ? "" : path;
+    return (
+      <NavigationHeader
+        isRoot={isRoot}
+        subtitle={subtitle}
+        onGoBack={onGoBack}
+        onLogout={onLogout}
+      />
+    );
+  }
+
   render() {
-    const { onLogout } = this.props;
     return (
       <View>
-        <View style={styles.header}>
-          <Text>Dropbox | </Text>
-          <TouchableHighlight onPress={onLogout}>
-            <Text>Logout</Text>
-          </TouchableHighlight>
-        </View>
+        {this.renderHeader()}
         {this.renderLoading()}
         {this.renderError()}
         {this.renderContent()}
@@ -100,6 +104,8 @@ FileNavigator.propTypes = {
     filesListFolder: PropTypes.func.isRequired
   }).isRequired,
   path: PropTypes.string.isRequired,
-  onLogout: PropTypes.func.isRequired,
-  onFilePick: PropTypes.func.isRequired
+  // onLogout: PropTypes.func.isRequired,
+  onFilePick: PropTypes.func.isRequired,
+  onGoBack: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired
 };

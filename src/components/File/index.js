@@ -6,6 +6,7 @@ import { Text, View } from "react-native";
 import MDo from "@mdo-org/mdo-core/lib/strings/index";
 import key from "weak-key";
 import Block from "../Block";
+import NavigationHeader from "../NavigationHeader";
 
 const readDropboxFile = (dropbox, path) =>
   new Promise((resolve, reject) => {
@@ -63,6 +64,19 @@ export default class File extends React.Component {
     return <Text>{error.message}</Text>;
   }
 
+  renderHeader() {
+    const { path, onGoBack, onLogout } = this.props;
+    const subtitle = path;
+    return (
+      <NavigationHeader
+        isRoot={false}
+        subtitle={subtitle}
+        onGoBack={onGoBack}
+        onLogout={onLogout}
+      />
+    );
+  }
+
   renderContent() {
     const { blocks } = this.state;
     return (
@@ -77,6 +91,7 @@ export default class File extends React.Component {
   render() {
     return (
       <View>
+        {this.renderHeader()}
         {this.renderLoading()}
         {this.renderError()}
         {this.renderContent()}
@@ -89,5 +104,7 @@ File.propTypes = {
   dropbox: PropTypes.shape({
     filesListFolder: PropTypes.func.isRequired
   }).isRequired,
-  path: PropTypes.string.isRequired
+  path: PropTypes.string.isRequired,
+  onGoBack: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired
 };

@@ -1,22 +1,14 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Dropbox } from "dropbox";
+import { Provider as PaperProvider } from "react-native-paper";
 import * as Storage from "./src/Storage";
 import { isReadableFile, isDirectory, getPath } from "./src/File";
 import DropboxLogin from "./src/components/DropboxLogin";
 import FileNavigator from "./src/components/FileNavigator";
 import File from "./src/components/File";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
-
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -70,6 +62,20 @@ export default class App extends React.Component {
     }
   }
 
+  goBack() {
+    const { filepath, dirpath } = this.state;
+    if (filepath) {
+      this.setState({ filepath: "" });
+      return;
+    }
+    this.setState({
+      dirpath: dirpath
+        .split("/")
+        .slice(0, -1)
+        .join("/")
+    });
+  }
+
   renderLoading() {
     const { loading } = this.state;
     if (!loading) return null;
@@ -97,7 +103,14 @@ export default class App extends React.Component {
 
   renderFile() {
     const { dropbox, filepath } = this.state;
-    return <File dropbox={dropbox} path={filepath} />;
+    return (
+      <File
+        dropbox={dropbox}
+        path={filepath}
+        onLogout={() => this.logout()}
+        onGoBack={() => this.goBack()}
+      />
+    );
   }
 
   renderFileNavigator() {
@@ -108,17 +121,26 @@ export default class App extends React.Component {
         path={dirpath}
         onLogout={() => this.logout()}
         onFilePick={path => this.selectFile(path)}
+        onGoBack={() => this.goBack()}
       />
     );
   }
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         {this.renderLoading()}
         {this.renderError()}
         {this.renderContent()}
       </View>
     );
   }
+}
+
+export default function Main() {
+  return (
+    <PaperProvider>
+      <App />
+    </PaperProvider>
+  );
 }
