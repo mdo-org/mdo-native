@@ -2,12 +2,10 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropbox } from "dropbox";
 import * as Storage from "./src/Storage";
+import { isReadableFile, isDirectory, getPath } from "./src/File";
 import DropboxLogin from "./src/components/DropboxLogin";
 import FileNavigator from "./src/components/FileNavigator";
 import File from "./src/components/File";
-
-const DIRPATH = "/todo/";
-// const FILEPATH = "/todo/home.md";
 
 const styles = StyleSheet.create({
   container: {
@@ -23,7 +21,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       dropbox: null,
-      dirpath: DIRPATH,
+      dirpath: "",
       filepath: "",
       loading: false,
       error: null
@@ -60,6 +58,16 @@ export default class App extends React.Component {
   logout() {
     Storage.deleteDropboxToken();
     this.setState({ dropbox: null });
+  }
+
+  selectFile(file) {
+    if (isReadableFile(file)) {
+      this.setState({ filepath: getPath(file) });
+      return;
+    }
+    if (isDirectory(file)) {
+      this.setState({ filepath: "", dirpath: getPath(file) });
+    }
   }
 
   renderLoading() {
@@ -99,6 +107,7 @@ export default class App extends React.Component {
         dropbox={dropbox}
         path={dirpath}
         onLogout={() => this.logout()}
+        onFilePick={path => this.selectFile(path)}
       />
     );
   }

@@ -1,5 +1,9 @@
 # To-Do
 
-- [ ] allow selecting a file
-      In the `<FileNavigator/>` component, make each link clickable. On click, render the `<File>` component and pass along the file.
-      Note: only actual files should be clickable (not directories). Directories should be implemented later.
+- [ ] allow navigating "back" from a directory
+- [ ] allow navigating "back" from a file
+- [ ] save current path and current file to local storage
+- [ ] allow running MDo on a file.
+- [ ] save file changes to Dropbox.
+- [ ] allow editing a file manually.
+- [ ] add material design

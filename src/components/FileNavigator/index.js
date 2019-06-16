@@ -28,6 +28,13 @@ export default class FileNavigator extends React.Component {
     this.loadDir();
   }
 
+  componentDidUpdate(prevProps) {
+    const { path } = this.props;
+    if (prevProps.path !== path) {
+      this.loadDir();
+    }
+  }
+
   loadDir() {
     const { loading } = this.state;
     const { dropbox, path } = this.props;
@@ -59,11 +66,12 @@ export default class FileNavigator extends React.Component {
 
   renderContent() {
     const { loading, error, files } = this.state;
+    const { onFilePick } = this.props;
     if (loading || error) return null;
     return (
       <View>
         {files.map(file => (
-          <FileRow key={file.name} file={file} />
+          <FileRow key={file.name} file={file} onFilePick={onFilePick} />
         ))}
       </View>
     );
@@ -75,7 +83,7 @@ export default class FileNavigator extends React.Component {
       <View>
         <View style={styles.header}>
           <Text>Dropbox | </Text>
-          <TouchableHighlight onPress={onLogout} underlayColor="red">
+          <TouchableHighlight onPress={onLogout}>
             <Text>Logout</Text>
           </TouchableHighlight>
         </View>
@@ -92,5 +100,6 @@ FileNavigator.propTypes = {
     filesListFolder: PropTypes.func.isRequired
   }).isRequired,
   path: PropTypes.string.isRequired,
-  onLogout: PropTypes.func.isRequired
+  onLogout: PropTypes.func.isRequired,
+  onFilePick: PropTypes.func.isRequired
 };
