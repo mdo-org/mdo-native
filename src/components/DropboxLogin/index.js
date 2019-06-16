@@ -3,7 +3,9 @@
 import React from "react";
 import { AuthSession } from "expo";
 import PropTypes from "prop-types";
-import { Text, View, Button } from "react-native";
+import { Text, View } from "react-native";
+import { Button } from "react-native-paper";
+import Header from "../Header";
 
 const APP_KEY = "8hq4uhvyl0xlgmj";
 
@@ -66,16 +68,13 @@ export default class DropboxLogin extends React.Component {
   renderContent() {
     const { loading, error } = this.state;
     if (loading || error) return null;
-    return (
-      <View>
-        <Button title="Login with Dropbox" onPress={() => this.login()} />
-      </View>
-    );
+    return <Button onPress={() => this.login()}>Login with Dropbox</Button>;
   }
 
   render() {
     return (
       <View>
+        <Header />
         {this.renderLoading()}
         {this.renderError()}
         {this.renderContent()}

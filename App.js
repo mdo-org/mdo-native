@@ -1,6 +1,6 @@
 import React from "react";
-import { Text, View } from "react-native";
 import { Dropbox } from "dropbox";
+import { Text, View } from "react-native";
 import { Provider as PaperProvider } from "react-native-paper";
 import * as Storage from "./src/Storage";
 import { isReadableFile, isDirectory, getPath } from "./src/File";

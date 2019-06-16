@@ -6,7 +6,7 @@ import { Text, View } from "react-native";
 import MDo from "@mdo-org/mdo-core/lib/strings/index";
 import key from "weak-key";
 import Block from "../Block";
-import NavigationHeader from "../NavigationHeader";
+import Header from "../Header";
 
 const readDropboxFile = (dropbox, path) =>
   new Promise((resolve, reject) => {
@@ -68,7 +68,7 @@ export default class File extends React.Component {
     const { path, onGoBack, onLogout } = this.props;
     const subtitle = path;
     return (
-      <NavigationHeader
+      <Header
         isRoot={false}
         subtitle={subtitle}
         onGoBack={onGoBack}

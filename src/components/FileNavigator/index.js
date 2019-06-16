@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 import { Text } from "react-native-paper";
 import { View } from "react-native";
 import FileRow from "./FileRow";
-import NavigationHeader from "../NavigationHeader";
+import Header from "../Header";
 
 export default class FileNavigator extends React.Component {
   constructor(props) {
@@ -78,7 +78,7 @@ export default class FileNavigator extends React.Component {
     const isRoot = path === "" || path === "/";
     const subtitle = isRoot ? "" : path;
     return (
-      <NavigationHeader
+      <Header
         isRoot={isRoot}
         subtitle={subtitle}
         onGoBack={onGoBack}
