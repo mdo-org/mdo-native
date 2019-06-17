@@ -104,7 +104,6 @@ FileNavigator.propTypes = {
     filesListFolder: PropTypes.func.isRequired
   }).isRequired,
   path: PropTypes.string.isRequired,
-  // onLogout: PropTypes.func.isRequired,
   onFilePick: PropTypes.func.isRequired,
   onGoBack: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired

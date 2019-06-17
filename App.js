@@ -8,6 +8,13 @@ import DropboxLogin from "./src/components/DropboxLogin";
 import FileNavigator from "./src/components/FileNavigator";
 import File from "./src/components/File";
 
+function getParentDir(path) {
+  return path
+    .split("/")
+    .slice(0, -1)
+    .join("/");
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -22,6 +29,11 @@ class App extends React.Component {
 
   componentDidMount() {
     this.loadFromStorage();
+  }
+
+  setPaths({ dirpath, filepath }) {
+    Storage.setPaths({ dirpath, filepath });
+    this.setState({ dirpath, filepath });
   }
 
   newDropbox(accessToken) {
@@ -40,7 +52,8 @@ class App extends React.Component {
 
     this.setState({ loading: true, error: null });
     const dropboxToken = await Storage.getDropboxToken();
-    this.setState({ loading: false });
+    const { dirpath, filepath } = await Storage.getPaths();
+    this.setState({ loading: false, dirpath, filepath });
 
     if (dropboxToken) {
       this.newDropbox(dropboxToken);
@@ -53,27 +66,23 @@ class App extends React.Component {
   }
 
   selectFile(file) {
+    const path = getPath(file);
     if (isReadableFile(file)) {
-      this.setState({ filepath: getPath(file) });
+      this.setPaths({ dirpath: getParentDir(path), filepath: path });
       return;
     }
     if (isDirectory(file)) {
-      this.setState({ filepath: "", dirpath: getPath(file) });
+      this.setPaths({ dirpath: path, filepath: "" });
     }
   }
 
   goBack() {
-    const { filepath, dirpath } = this.state;
+    const { dirpath, filepath } = this.state;
     if (filepath) {
-      this.setState({ filepath: "" });
+      this.setPaths({ dirpath, filepath: "" });
       return;
     }
-    this.setState({
-      dirpath: dirpath
-        .split("/")
-        .slice(0, -1)
-        .join("/")
-    });
+    this.setPaths({ dirpath: getParentDir(dirpath), filepath: "" });
   }
 
   renderLoading() {
