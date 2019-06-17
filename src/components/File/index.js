@@ -2,10 +2,8 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Text, View } from "react-native";
-import MDo from "@mdo-org/mdo-core/lib/strings/index";
-import key from "weak-key";
-import Block from "../Block";
+import { View, ScrollView } from "react-native";
+import { Text } from "react-native-paper";
 import Header from "../Header";
 
 const readDropboxFile = (dropbox, path) =>
@@ -13,12 +11,11 @@ const readDropboxFile = (dropbox, path) =>
     dropbox
       .filesDownload({ path })
       .then(response => {
-        const blob = response.fileBlob;
         const reader = new global.FileReader();
         reader.addEventListener("loadend", () => {
           resolve(reader.result);
         });
-        reader.readAsText(blob);
+        reader.readAsText(response.fileBlob, "UTF-8");
       })
       .catch(err => reject(err));
   });
@@ -29,7 +26,7 @@ export default class File extends React.Component {
     this.state = {
       loading: false,
       error: null,
-      blocks: []
+      text: ""
     };
   }
 
@@ -42,13 +39,12 @@ export default class File extends React.Component {
     const { dropbox, path } = this.props;
 
     if (loading) return;
-    this.setState({ loading: true, error: null, blocks: [] });
+    this.setState({ loading: true, error: null });
 
     readDropboxFile(dropbox, path)
-      .then(MDo.parse)
-      .then(blocks => this.setState({ loading: false, error: null, blocks }))
+      .then(text => this.setState({ loading: false, error: null, text }))
       .catch(err => {
-        this.setState({ loading: false, error: err, blocks: [] });
+        this.setState({ loading: false, error: err });
       });
   }
 
@@ -78,13 +74,11 @@ export default class File extends React.Component {
   }
 
   renderContent() {
-    const { blocks } = this.state;
+    const { text } = this.state;
     return (
-      <View>
-        {blocks.map(block => (
-          <Block key={key(block)} block={block} />
-        ))}
-      </View>
+      <ScrollView>
+        <Text>{text}</Text>
+      </ScrollView>
     );
   }
 
