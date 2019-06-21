@@ -4,6 +4,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { View, ScrollView } from "react-native";
 import { Text } from "react-native-paper";
+import MDo from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
+import { DateTime } from "luxon";
 import Header from "../Header";
 
 const readDropboxFile = (dropbox, path) =>
@@ -21,7 +23,9 @@ const readDropboxFile = (dropbox, path) =>
   });
 
 const runMDo = text => {
-  return Promise.resolve(`MDo Ran!!\n\n${text}`);
+  const now = DateTime.local();
+  const options = { time: now.toString(), timezone: now.zoneName };
+  return MDo(text, options);
 };
 
 export default class File extends React.Component {

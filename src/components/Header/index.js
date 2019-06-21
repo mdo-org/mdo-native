@@ -18,6 +18,11 @@ class Header extends React.Component {
     this.setState({ menuVisible: false });
   }
 
+  runAndCloseMenu(func) {
+    this.setState({ menuVisible: false });
+    func();
+  }
+
   renderMenu() {
     const { theme, onLogout, onRunMDo } = this.props;
     const { menuVisible } = this.state;
@@ -36,8 +41,18 @@ class Header extends React.Component {
           />
         }
       >
-        {onRunMDo && <Menu.Item onPress={onRunMDo} title="Run MDo" />}
-        {onLogout && <Menu.Item onPress={onLogout} title="Log Out" />}
+        {onRunMDo && (
+          <Menu.Item
+            onPress={() => this.runAndCloseMenu(onRunMDo)}
+            title="Run MDo"
+          />
+        )}
+        {onLogout && (
+          <Menu.Item
+            onPress={() => this.runAndCloseMenu(onLogout)}
+            title="Log Out"
+          />
+        )}
       </Menu>
     );
   }

@@ -1,9 +1,10 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
-    "@mdo-org/mdo-core": "^0.2.9",
+    "@mdo-org/mdo-flow-live-in-the-moment": "^0.2.10",
     "dropbox": "^4.0.17",
     "expo": "^32.0.0",
+    "luxon": "^1.16.0",
     "prop-types": "^15.7.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
