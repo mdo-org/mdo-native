@@ -1,5 +1,6 @@
 // File renders a single MDo file
 
+import encoding from "encoding";
 import React from "react";
 import PropTypes from "prop-types";
 import { View, ScrollView } from "react-native";
@@ -20,6 +21,15 @@ const readDropboxFile = (dropbox, path) =>
         reader.readAsText(response.fileBlob, "UTF-8");
       })
       .catch(err => reject(err));
+  });
+
+const writeDropboxFile = (dropbox, path, str) =>
+  dropbox.filesUpload({
+    path,
+    // converting to ISO-8859-1 to get around dropbox issue
+    // https://github.com/dropbox/dropbox-sdk-js/issues/179
+    contents: encoding.convert(`${str}`, "ISO-8859-1"),
+    mode: "overwrite"
   });
 
 const runMDo = text => {
@@ -43,15 +53,22 @@ export default class File extends React.Component {
   }
 
   onRunMDo() {
+    const { dropbox, path } = this.props;
     const { loading, text } = this.state;
+
     if (loading) return null;
     this.setState({ loading: true });
+
     return runMDo(text)
-      .then(result => {
-        this.setState({ loading: false, text: result });
+      .then(updatedText => {
+        return writeDropboxFile(dropbox, path, updatedText).then(() => {
+          this.setState({ loading: false, text: updatedText });
+        });
       })
       .catch(err => {
-        this.setState({ loading: false, error: err });
+        const error =
+          typeof err.error === "string" ? new Error(err.error) : err;
+        this.setState({ loading: false, error });
       });
   }
 
