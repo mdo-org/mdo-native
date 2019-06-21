@@ -37,3 +37,7 @@ In my case, I had to create a local `.vimrc` file with:
 ```
 let g:syntastic_javascript_eslint_exec='/path/to/mdo-native/node_modules/.bin/eslint'
 ```
+
+### UI Library
+
+MDo Native is using [React Native Paper](https://callstack.github.io/react-native-paper/) as the UI library.

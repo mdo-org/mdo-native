@@ -20,6 +20,10 @@ const readDropboxFile = (dropbox, path) =>
       .catch(err => reject(err));
   });
 
+const runMDo = text => {
+  return Promise.resolve(`MDo Ran!!\n\n${text}`);
+};
+
 export default class File extends React.Component {
   constructor(props) {
     super(props);
@@ -32,6 +36,19 @@ export default class File extends React.Component {
 
   componentDidMount() {
     this.loadFile();
+  }
+
+  onRunMDo() {
+    const { loading, text } = this.state;
+    if (loading) return null;
+    this.setState({ loading: true });
+    return runMDo(text)
+      .then(result => {
+        this.setState({ loading: false, text: result });
+      })
+      .catch(err => {
+        this.setState({ loading: false, error: err });
+      });
   }
 
   loadFile() {
@@ -62,13 +79,14 @@ export default class File extends React.Component {
 
   renderHeader() {
     const { path, onGoBack, onLogout } = this.props;
-    const subtitle = path;
+    const { text } = this.state;
+    const runMDoCB = text && text.length ? () => this.onRunMDo(this) : null;
     return (
       <Header
-        isRoot={false}
-        subtitle={subtitle}
+        subtitle={path}
         onGoBack={onGoBack}
         onLogout={onLogout}
+        onRunMDo={runMDoCB}
       />
     );
   }

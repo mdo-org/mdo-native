@@ -76,12 +76,10 @@ export default class FileNavigator extends React.Component {
   renderHeader() {
     const { path, onGoBack, onLogout } = this.props;
     const isRoot = path === "" || path === "/";
-    const subtitle = isRoot ? "" : path;
     return (
       <Header
-        isRoot={isRoot}
-        subtitle={subtitle}
-        onGoBack={onGoBack}
+        subtitle={isRoot ? "" : path}
+        onGoBack={isRoot ? null : onGoBack}
         onLogout={onLogout}
       />
     );

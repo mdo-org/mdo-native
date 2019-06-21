@@ -18,43 +18,54 @@ class Header extends React.Component {
     this.setState({ menuVisible: false });
   }
 
-  render() {
+  renderMenu() {
+    const { theme, onLogout, onRunMDo } = this.props;
     const { menuVisible } = this.state;
-    const { isRoot, subtitle, onGoBack, onLogout, theme } = this.props;
+
+    if (!onLogout && !onRunMDo) return null;
+
+    return (
+      <Menu
+        visible={menuVisible}
+        onDismiss={() => this.closeMenu()}
+        anchor={
+          <IconButton
+            icon="dehaze"
+            color={theme.colors.surface}
+            onPress={() => this.openMenu()}
+          />
+        }
+      >
+        {onRunMDo && <Menu.Item onPress={onRunMDo} title="Run MDo" />}
+        {onLogout && <Menu.Item onPress={onLogout} title="Log Out" />}
+      </Menu>
+    );
+  }
+
+  render() {
+    const { subtitle, onGoBack } = this.props;
     return (
       <Appbar.Header>
-        {isRoot ? null : <Appbar.BackAction onPress={onGoBack} />}
+        {onGoBack && <Appbar.BackAction onPress={onGoBack} />}
         <Appbar.Content title="MDo-Native" subtitle={subtitle} />
-        <Menu
-          visible={menuVisible}
-          onDismiss={() => this.closeMenu()}
-          anchor={
-            <IconButton
-              icon="dehaze"
-              color={theme.colors.surface}
-              onPress={() => this.openMenu()}
-            />
-          }
-        >
-          <Menu.Item onPress={onLogout} title="Log Out" />
-        </Menu>
+        {this.renderMenu()}
       </Appbar.Header>
     );
   }
 }
 
 Header.defaultProps = {
-  isRoot: true,
   subtitle: "",
-  onGoBack: () => {},
-  onLogout: () => {}
+  onGoBack: null,
+  onLogout: null,
+  onRunMDo: null
 };
 
 Header.propTypes = {
-  isRoot: PropTypes.bool,
   subtitle: PropTypes.string,
   onGoBack: PropTypes.func,
   onLogout: PropTypes.func,
+  onRunMDo: PropTypes.func,
   theme: PropTypes.shape({
     colors: PropTypes.shape({
       primary: PropTypes.string.isRequired
