@@ -1,13 +1,10 @@
 {
   "expo": {
     "name": "MDo",
-    "slug": "MDoNative",
+    "slug": "mdo",
     "privacy": "public",
     "sdkVersion": "32.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,11 +16,11 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "React Native app for MDo.\n\nMDo is a free, open source to-do app built to live inside your editor.",
+    "githubUrl": "https://github.com/mdo-org/mdo-native"
   }
 }

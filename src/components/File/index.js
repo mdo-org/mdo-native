@@ -4,7 +4,7 @@ import encoding from "encoding";
 import React from "react";
 import PropTypes from "prop-types";
 import { View, ScrollView } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, TextInput } from "react-native-paper";
 import MDo from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
 import { DateTime } from "luxon";
 import Header from "../Header";
@@ -57,7 +57,7 @@ export default class File extends React.Component {
     const { loading, text } = this.state;
 
     if (loading) return null;
-    this.setState({ loading: true });
+    this.setState({ loading: true, error: null });
 
     return runMDo(text)
       .then(updatedText => {
@@ -113,10 +113,15 @@ export default class File extends React.Component {
   }
 
   renderContent() {
-    const { text } = this.state;
+    const { text, loading } = this.state;
     return (
       <ScrollView>
-        <Text>{text}</Text>
+        <TextInput
+          value={text}
+          multiline
+          editable={!loading}
+          onChangeText={newText => this.setState({ text: newText })}
+        />
       </ScrollView>
     );
   }
