@@ -1,7 +1,5 @@
 # To-Do
 
-- [ ] allow editing a file manually.
-- [ ] handle conflicts
 - [ ] allow reloading a file by "pulling down"
 - [ ] improve design
   - loading

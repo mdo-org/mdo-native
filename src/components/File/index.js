@@ -14,23 +14,33 @@ const readDropboxFile = (dropbox, path) =>
     dropbox
       .filesDownload({ path })
       .then(response => {
+        const { rev, fileBlob } = response;
         const reader = new global.FileReader();
         reader.addEventListener("loadend", () => {
-          resolve(reader.result);
+          resolve({ rev, text: reader.result });
         });
-        reader.readAsText(response.fileBlob, "UTF-8");
+        reader.readAsText(fileBlob, "UTF-8");
       })
       .catch(err => reject(err));
   });
 
-const writeDropboxFile = (dropbox, path, str) =>
+const writeDropboxFile = (dropbox, path, str, rev) =>
   dropbox.filesUpload({
     path,
     // converting to ISO-8859-1 to get around dropbox issue
     // https://github.com/dropbox/dropbox-sdk-js/issues/179
     contents: encoding.convert(`${str}`, "ISO-8859-1"),
-    mode: "overwrite"
+    mode: { ".tag": "update", update: rev },
+    autorename: true // on conflict, Dropbox will autorename the file
   });
+
+const formatDropboxError = (err, action) => {
+  if (err.message) return err;
+  if (typeof err.error === "string") return new Error(err.error);
+  if (typeof err.error_summary === "string")
+    return new Error(err.error_summary);
+  return new Error(`Unkown error while ${action}`);
+};
 
 const runMDo = text => {
   const now = DateTime.local();
@@ -41,10 +51,13 @@ const runMDo = text => {
 export default class File extends React.Component {
   constructor(props) {
     super(props);
+    const { path } = props;
     this.state = {
       loading: false,
       error: null,
-      text: ""
+      text: "",
+      path, // path might change if there is a conflict, so I'm copying to state
+      rev: null // provided by dropbox to identify current version of the file
     };
   }
 
@@ -53,36 +66,51 @@ export default class File extends React.Component {
   }
 
   onRunMDo() {
-    const { dropbox, path } = this.props;
-    const { loading, text } = this.state;
+    const { dropbox } = this.props;
+    const { loading, text, rev, path } = this.state;
 
     if (loading) return null;
     this.setState({ loading: true, error: null });
 
     return runMDo(text)
       .then(updatedText => {
-        return writeDropboxFile(dropbox, path, updatedText).then(() => {
-          this.setState({ loading: false, text: updatedText });
-        });
+        return writeDropboxFile(dropbox, path, updatedText, rev).then(
+          metaData => {
+            const newRev = metaData.rev || rev;
+            const newPath = metaData.path_lower || path;
+            this.setState({
+              loading: false,
+              text: updatedText,
+              rev: newRev,
+              path: newPath
+            });
+          }
+        );
       })
       .catch(err => {
-        const error =
-          typeof err.error === "string" ? new Error(err.error) : err;
-        this.setState({ loading: false, error });
+        this.setState({
+          loading: false,
+          error: formatDropboxError(err, "updating file")
+        });
       });
   }
 
   loadFile() {
-    const { loading } = this.state;
-    const { dropbox, path } = this.props;
+    const { loading, path } = this.state;
+    const { dropbox } = this.props;
 
     if (loading) return;
     this.setState({ loading: true, error: null });
 
     readDropboxFile(dropbox, path)
-      .then(text => this.setState({ loading: false, error: null, text }))
+      .then(({ text, rev }) =>
+        this.setState({ loading: false, error: null, text, rev })
+      )
       .catch(err => {
-        this.setState({ loading: false, error: err });
+        this.setState({
+          loading: false,
+          error: formatDropboxError(err, "loading file")
+        });
       });
   }
 
@@ -99,8 +127,8 @@ export default class File extends React.Component {
   }
 
   renderHeader() {
-    const { path, onGoBack, onLogout } = this.props;
-    const { text } = this.state;
+    const { onGoBack, onLogout } = this.props;
+    const { path, text } = this.state;
     const runMDoCB = text && text.length ? () => this.onRunMDo(this) : null;
     return (
       <Header
