@@ -2,8 +2,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
     "@mdo-org/mdo-flow-live-in-the-moment": "^0.2.10",
+    "buffer": "^5.2.1",
     "dropbox": "^4.0.17",
-    "encoding": "^0.1.12",
     "expo": "^32.0.0",
     "luxon": "^1.16.0",
     "prop-types": "^15.7.2",

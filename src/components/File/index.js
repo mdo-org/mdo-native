@@ -1,6 +1,6 @@
 // File renders a single MDo file
 
-import encoding from "encoding";
+import { Buffer } from "buffer";
 import React from "react";
 import PropTypes from "prop-types";
 import { View, ScrollView } from "react-native";
@@ -27,9 +27,9 @@ const readDropboxFile = (dropbox, path) =>
 const writeDropboxFile = (dropbox, path, str, rev) =>
   dropbox.filesUpload({
     path,
-    // converting to ISO-8859-1 to get around dropbox issue
+    // converting to Buffer to get around dropbox issue
     // https://github.com/dropbox/dropbox-sdk-js/issues/179
-    contents: encoding.convert(`${str}`, "ISO-8859-1"),
+    contents: Buffer.from(str),
     mode: { ".tag": "update", update: rev },
     autorename: true // on conflict, Dropbox will autorename the file
   });
