@@ -4,10 +4,12 @@ import { Buffer } from "buffer";
 import React from "react";
 import PropTypes from "prop-types";
 import { View, ScrollView } from "react-native";
-import { Text, TextInput } from "react-native-paper";
-import MDo from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
+import { Text } from "react-native-paper";
+import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
+import { parse, stringify } from "@mdo-org/mdo-core/lib/strings";
 import { DateTime } from "luxon";
 import Header from "../Header";
+import Block from "../Block";
 
 const readDropboxFile = (dropbox, path) =>
   new Promise((resolve, reject) => {
@@ -42,10 +44,10 @@ const formatDropboxError = (err, action) => {
   return new Error(`Unkown error while ${action}`);
 };
 
-const runMDo = text => {
+const runMDoFlow = text => {
   const now = DateTime.local();
   const options = { time: now.toString(), timezone: now.zoneName };
-  return MDo(text, options);
+  return MDoFlow(text, options);
 };
 
 export default class File extends React.Component {
@@ -55,7 +57,7 @@ export default class File extends React.Component {
     this.state = {
       loading: false,
       error: null,
-      text: "",
+      blocks: [], // MDo blocks parsed from the file's content
       path, // path might change if there is a conflict, so I'm copying to state
       rev: null // provided by dropbox to identify current version of the file
     };
@@ -65,53 +67,61 @@ export default class File extends React.Component {
     this.loadFile();
   }
 
-  onRunMDo() {
+  async onRunMDo() {
     const { dropbox } = this.props;
-    const { loading, text, rev, path } = this.state;
+    const { loading, blocks, rev, path } = this.state;
 
     if (loading) return null;
     this.setState({ loading: true, error: null });
 
-    return runMDo(text)
-      .then(updatedText => {
-        return writeDropboxFile(dropbox, path, updatedText, rev).then(
-          metaData => {
-            const newRev = metaData.rev || rev;
-            const newPath = metaData.path_lower || path;
-            this.setState({
-              loading: false,
-              text: updatedText,
-              rev: newRev,
-              path: newPath
-            });
-          }
-        );
-      })
-      .catch(err => {
-        this.setState({
-          loading: false,
-          error: formatDropboxError(err, "updating file")
-        });
+    try {
+      const text = await stringify(blocks);
+      const updatedText = await runMDoFlow(text);
+      const metaData = await writeDropboxFile(dropbox, path, updatedText, rev);
+      const newRev = metaData.rev || rev;
+      const newPath = metaData.path_lower || path;
+      const newBlocks = await parse(updatedText);
+      return this.setState({
+        loading: false,
+        blocks: newBlocks,
+        rev: newRev,
+        path: newPath
       });
+    } catch (err) {
+      return this.setState({
+        loading: false,
+        error: formatDropboxError(err, "updating file")
+      });
+    }
   }
 
-  loadFile() {
+  async loadFile() {
     const { loading, path } = this.state;
     const { dropbox } = this.props;
 
     if (loading) return;
     this.setState({ loading: true, error: null });
 
-    readDropboxFile(dropbox, path)
-      .then(({ text, rev }) =>
-        this.setState({ loading: false, error: null, text, rev })
-      )
-      .catch(err => {
-        this.setState({
-          loading: false,
-          error: formatDropboxError(err, "loading file")
-        });
+    try {
+      const { text, rev } = await readDropboxFile(dropbox, path);
+      const blocks = await parse(text);
+      this.setState({ loading: false, error: null, blocks, rev });
+    } catch (err) {
+      this.setState({
+        loading: false,
+        error: formatDropboxError(err, "loading file")
       });
+    }
+  }
+
+  updateBlockText(blockToUpdate, newText) {
+    const { blocks } = this.state;
+    this.setState({
+      blocks: blocks.map(block => {
+        if (block !== blockToUpdate) return block;
+        return { ...blockToUpdate, text: newText };
+      })
+    });
   }
 
   renderLoading() {
@@ -128,8 +138,8 @@ export default class File extends React.Component {
 
   renderHeader() {
     const { onGoBack, onLogout } = this.props;
-    const { path, text } = this.state;
-    const runMDoCB = text && text.length ? () => this.onRunMDo(this) : null;
+    const { path, blocks } = this.state;
+    const runMDoCB = blocks && blocks.length ? () => this.onRunMDo() : null;
     return (
       <Header
         subtitle={path}
@@ -141,15 +151,19 @@ export default class File extends React.Component {
   }
 
   renderContent() {
-    const { text, loading } = this.state;
+    const { blocks } = this.state;
     return (
       <ScrollView>
-        <TextInput
-          value={text}
-          multiline
-          editable={!loading}
-          onChangeText={newText => this.setState({ text: newText })}
-        />
+        {blocks
+          .filter(({ type }) => type !== "PADDING")
+          .map(block => (
+            <Block
+              block={block}
+              onChangeText={newText => {
+                this.updateBlockText(block, newText);
+              }}
+            />
+          ))}
       </ScrollView>
     );
   }

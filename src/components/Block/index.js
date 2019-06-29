@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Text } from "react-native";
+import { TextInput } from "react-native-paper";
 
 const blockTypeStringMap = new Map([
   ["COMPLETE_TASK", "- [X]"],
@@ -9,12 +9,11 @@ const blockTypeStringMap = new Map([
   ["PADDING", ""]
 ]);
 
-const Block = ({ block }) => {
+const Block = ({ block, onChangeText }) => {
   const typeAsString = blockTypeStringMap.get(block.type) || "";
+  const text = block.text.replace("{{type}}", typeAsString);
   return (
-    <Text>
-      {typeAsString} {block.text}
-    </Text>
+    <TextInput value={text} multiline editable onChangeText={onChangeText} />
   );
 };
 
@@ -22,7 +21,8 @@ Block.propTypes = {
   block: PropTypes.shape({
     type: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired
-  }).isRequired
+  }).isRequired,
+  onChangeText: PropTypes.func.isRequired
 };
 
 export default Block;
