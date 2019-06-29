@@ -3,7 +3,7 @@
 import { Buffer } from "buffer";
 import React from "react";
 import PropTypes from "prop-types";
-import { View, ScrollView } from "react-native";
+import { View, FlatList } from "react-native";
 import { Text } from "react-native-paper";
 import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
 import { parse, stringify } from "@mdo-org/mdo-core/lib/strings";
@@ -118,8 +118,10 @@ export default class File extends React.Component {
     const { blocks } = this.state;
     this.setState({
       blocks: blocks.map(block => {
-        if (block !== blockToUpdate) return block;
-        return { ...blockToUpdate, text: newText };
+        if (block === blockToUpdate) {
+          return { ...block, text: newText };
+        }
+        return block;
       })
     });
   }
@@ -153,18 +155,18 @@ export default class File extends React.Component {
   renderContent() {
     const { blocks } = this.state;
     return (
-      <ScrollView>
-        {blocks
-          .filter(({ type }) => type !== "PADDING")
-          .map(block => (
-            <Block
-              block={block}
-              onChangeText={newText => {
-                this.updateBlockText(block, newText);
-              }}
-            />
-          ))}
-      </ScrollView>
+      <FlatList
+        data={blocks.filter(({ type }) => type !== "PADDING")}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <Block
+            block={item}
+            onChangeText={newText => {
+              this.updateBlockText(item, newText);
+            }}
+          />
+        )}
+      />
     );
   }
 
