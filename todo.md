@@ -1,6 +1,5 @@
 # To-Do
 
-- [ ] allow reordering to-dos
 - [ ] improve design
   - loading
   - filepicker

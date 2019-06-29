@@ -6,10 +6,15 @@ import PropTypes from "prop-types";
 import { View, FlatList } from "react-native";
 import { Text } from "react-native-paper";
 import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
-import { parse, stringify } from "@mdo-org/mdo-core/lib/strings";
+import MDo from "@mdo-org/mdo-core/lib/strings";
 import { DateTime } from "luxon";
 import Header from "../Header";
 import Block from "../Block";
+
+const parse = async text => {
+  const blocks = await MDo.parse(text);
+  return blocks.filter(({ type }) => type !== "PADDING");
+};
 
 const readDropboxFile = (dropbox, path) =>
   new Promise((resolve, reject) => {
@@ -58,6 +63,8 @@ export default class File extends React.Component {
       loading: false,
       error: null,
       blocks: [], // MDo blocks parsed from the file's content
+      activeIndex: null, // MDo block that is currently active/expanded
+      activeIsEditing: false, // Is the active block in edit mode?
       path, // path might change if there is a conflict, so I'm copying to state
       rev: null // provided by dropbox to identify current version of the file
     };
@@ -72,10 +79,10 @@ export default class File extends React.Component {
     const { loading, blocks, rev, path } = this.state;
 
     if (loading) return null;
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: null, activeIndex: null });
 
     try {
-      const text = await stringify(blocks);
+      const text = await MDo.stringify(blocks);
       const updatedText = await runMDoFlow(text);
       const metaData = await writeDropboxFile(dropbox, path, updatedText, rev);
       const newRev = metaData.rev || rev;
@@ -112,6 +119,48 @@ export default class File extends React.Component {
         error: formatDropboxError(err, "loading file")
       });
     }
+  }
+
+  toggleBlock(index) {
+    const { activeIndex } = this.state;
+    const newActiveIndex = activeIndex === index ? null : index;
+    this.setState({ activeIndex: newActiveIndex, activeIsEditing: false });
+  }
+
+  toggleEditBlock(index) {
+    const { activeIndex, activeIsEditing } = this.state;
+    this.setState({
+      activeIndex: index,
+      activeIsEditing: activeIndex !== index || !activeIsEditing
+    });
+  }
+
+  moveBlockUp(index) {
+    const { blocks, activeIndex } = this.state;
+    if (index === 0) return;
+    this.setState({
+      blocks: [
+        ...blocks.slice(0, index - 1),
+        blocks[index],
+        blocks[index - 1],
+        ...blocks.slice(index + 1)
+      ].filter(Boolean),
+      activeIndex: activeIndex === index ? index - 1 : activeIndex
+    });
+  }
+
+  moveBlockDown(index) {
+    const { blocks, activeIndex } = this.state;
+    if (index >= blocks.length - 1) return;
+    this.setState({
+      blocks: [
+        ...blocks.slice(0, index),
+        blocks[index + 1],
+        blocks[index],
+        ...blocks.slice(index + 2)
+      ].filter(Boolean),
+      activeIndex: activeIndex === index ? index + 1 : activeIndex
+    });
   }
 
   updateBlockText(blockToUpdate, newText) {
@@ -153,19 +202,30 @@ export default class File extends React.Component {
   }
 
   renderContent() {
-    const { blocks } = this.state;
+    const { blocks, activeIndex, activeIsEditing } = this.state;
     return (
       <FlatList
-        data={blocks.filter(({ type }) => type !== "PADDING")}
+        data={blocks}
+        extraData={{ activeIndex, activeIsEditing }}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Block
-            block={item}
-            onChangeText={newText => {
-              this.updateBlockText(item, newText);
-            }}
-          />
-        )}
+        renderItem={({ item, index }) => {
+          const active = activeIndex === index;
+          const editMode = active && activeIsEditing;
+          return (
+            <Block
+              block={item}
+              onChangeText={newText => {
+                this.updateBlockText(item, newText);
+              }}
+              onToggle={() => this.toggleBlock(index)}
+              onEditToggle={() => this.toggleEditBlock(index)}
+              onMoveUp={() => this.moveBlockUp(index)}
+              onMoveDown={() => this.moveBlockDown(index)}
+              active={active}
+              editMode={editMode}
+            />
+          );
+        }}
       />
     );
   }
