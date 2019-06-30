@@ -5,7 +5,7 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Text } from "react-native-paper";
+import { Text, ActivityIndicator } from "react-native-paper";
 import { View } from "react-native";
 import FileRow from "./FileRow";
 import Header from "../Header";
@@ -51,7 +51,7 @@ export default class FileNavigator extends React.Component {
   renderLoading() {
     const { loading } = this.state;
     if (!loading) return null;
-    return <Text>Loading...</Text>;
+    return <ActivityIndicator animating style={{ marginTop: 20 }} />;
   }
 
   renderError() {

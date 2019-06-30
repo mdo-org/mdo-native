@@ -3,8 +3,8 @@
 import React from "react";
 import { AuthSession } from "expo";
 import PropTypes from "prop-types";
-import { Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import { View } from "react-native";
+import { Button, Text, ActivityIndicator } from "react-native-paper";
 import Header from "../Header";
 
 const APP_KEY = "8hq4uhvyl0xlgmj";
@@ -56,7 +56,7 @@ export default class DropboxLogin extends React.Component {
   renderLoading() {
     const { loading } = this.state;
     if (!loading) return null;
-    return <Text>Loading...</Text>;
+    return <ActivityIndicator animating style={{ marginTop: 20 }} />;
   }
 
   renderError() {

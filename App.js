@@ -1,7 +1,11 @@
 import React from "react";
 import { Dropbox } from "dropbox";
-import { Text, View } from "react-native";
-import { Provider as PaperProvider } from "react-native-paper";
+import { View } from "react-native";
+import {
+  Provider as PaperProvider,
+  Text,
+  ActivityIndicator
+} from "react-native-paper";
 import * as Storage from "./src/Storage";
 import { isReadableFile, isDirectory, getPath } from "./src/File";
 import DropboxLogin from "./src/components/DropboxLogin";
@@ -88,7 +92,7 @@ class App extends React.Component {
   renderLoading() {
     const { loading } = this.state;
     if (!loading) return null;
-    return <Text>Loading...</Text>;
+    return <ActivityIndicator animating style={{ marginTop: 50 }} />;
   }
 
   renderError() {

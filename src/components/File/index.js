@@ -4,7 +4,7 @@ import { Buffer } from "buffer";
 import React from "react";
 import PropTypes from "prop-types";
 import { View, FlatList } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, ActivityIndicator } from "react-native-paper";
 import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
 import MDo from "@mdo-org/mdo-core/lib/strings";
 import { DateTime } from "luxon";
@@ -178,7 +178,7 @@ export default class File extends React.Component {
   renderLoading() {
     const { loading } = this.state;
     if (!loading) return null;
-    return <Text>Loading...</Text>;
+    return <ActivityIndicator animating style={{ marginTop: 20 }} />;
   }
 
   renderError() {
