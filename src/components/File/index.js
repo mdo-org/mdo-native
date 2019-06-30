@@ -95,8 +95,15 @@ export default class File extends React.Component {
     this.setState({ loading: true, error: null, activeIndex: null });
 
     try {
-      const text = blocks.join("\n");
-      const updatedText = await runMDoFlow(text);
+      let updatedText = blocks.join("\n");
+
+      // if MDo validation fails, display an error but save anyways.
+      try {
+        updatedText = await runMDoFlow(updatedText);
+      } catch (err) {
+        this.setState({ error: err });
+      }
+
       const metaData = await writeDropboxFile(dropbox, path, updatedText, rev);
       const newRev = metaData.rev || rev;
       const newPath = metaData.path_lower || path;
@@ -115,23 +122,29 @@ export default class File extends React.Component {
     }
   }
 
-  async loadFile() {
+  loadFile() {
     const { loading, path } = this.state;
     const { dropbox } = this.props;
 
     if (loading) return;
     this.setState({ loading: true, error: null });
 
-    try {
-      const { text, rev } = await readDropboxFile(dropbox, path);
-      const blocks = await parse(text);
-      this.setState({ loading: false, error: null, blocks, rev });
-    } catch (err) {
-      this.setState({
-        loading: false,
-        error: formatDropboxError(err, "loading file")
+    readDropboxFile(dropbox, path)
+      .then(({ text, rev }) => {
+        parse(text)
+          .then(blocks => {
+            this.setState({ loading: false, error: null, blocks, rev });
+          })
+          .catch(err => {
+            this.setState({ loading: false, error: err, blocks: [text], rev });
+          });
+      })
+      .catch(err => {
+        this.setState({
+          loading: false,
+          error: formatDropboxError(err, "loading file")
+        });
       });
-    }
   }
 
   toggleBlock(index) {
