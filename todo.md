@@ -1,7 +1,10 @@
 # To-Do
 
 - [ ] allow creating new files.
+- [ ] allow adding a new block at the start of a file.
 - [ ] allow reloading a file by "pulling down"
+- [ ] remove the "Log out" option when a file is open.
+      we don't want to accidentally log out when touching "Run MDo"
 - [ ] review [unpkg](https://unpkg.com/)
       it might be a way to import an MDo flow dynamically
 - [ ] add confirmation before logout
