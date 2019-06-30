@@ -55,7 +55,11 @@ The first step is to generate the APK:
 expo build:android
 ```
 
-Once the APK is installed on a device, updates can be pushed by running `expo publish`.
+Once the APK is installed on a device, updates can be pushed by running:
+
+```
+expo publish
+```
 
 Once a new version is published, users will download the new JS the next time
 they open the app.
