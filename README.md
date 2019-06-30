@@ -28,7 +28,8 @@ This project is configured to run [prettier](https://github.com/prettier/prettie
 However, we still use [eslint](https://eslint.org/) to capture syntax errors. The `.eslintrc.json` file is set to extend [eslint-config-prettier](https://www.npmjs.com/package/eslint-config-prettier), so eslint will only report on syntax errors instead of enforcing formatting.
 
 Note:  
-Some editors will fail to load eslint from a pacakage's subdirectory, and will default to the global eslint - which might not have all the plugins you need.
+Some editors will fail to load eslint from a pacakage's subdirectory, and will
+default to the global eslint - which might not have all the plugins you need.
 
 If that happens, you'll need to manually specify the path to the correct `eslint`.
 
@@ -41,3 +42,25 @@ let g:syntastic_javascript_eslint_exec='/path/to/mdo-native/node_modules/.bin/es
 ### UI Library
 
 MDo Native is using [React Native Paper](https://callstack.github.io/react-native-paper/) as the UI library.
+
+### Publishing the app
+
+I'm using the expo cli to publish the app.
+
+More info: https://docs.expo.io/versions/v33.0.0/distribution/building-standalone-apps/
+
+The first step is to generate the APK:
+
+```
+expo build:android
+```
+
+Once the APK is installed on a device, updates can be pushed by running `expo publish`.
+
+Once a new version is published, users will download the new JS the next time
+they open the app.
+
+Note: On the first build, Expo generated a keystore for signing the app. I copied
+the generated `mdo.jks` to my [dotfiles repo](https://github.com/alexishevia/.dotfiles/blob/master/encrypted.sh)
+in case I ever need it. I also copied the "Keystore password", "Key alias", and
+"Key password" values to my LastPass vault.
