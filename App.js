@@ -1,6 +1,7 @@
 import React from "react";
 import { Dropbox } from "dropbox";
 import { View } from "react-native";
+import { SplashScreen } from "expo";
 import {
   Provider as PaperProvider,
   Text,
@@ -17,6 +18,13 @@ function getParentDir(path) {
     .split("/")
     .slice(0, -1)
     .join("/");
+}
+
+let splashScreenVisible = true;
+function hideSplashScreen() {
+  if (!splashScreenVisible) return;
+  SplashScreen.hide();
+  splashScreenVisible = false;
 }
 
 class App extends React.Component {
@@ -102,6 +110,7 @@ class App extends React.Component {
   }
 
   renderContent() {
+    hideSplashScreen();
     const { dropbox, loading, error, filepath } = this.state;
     if (loading || error) return null;
     if (!dropbox) {
