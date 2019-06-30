@@ -4,7 +4,13 @@ import { Buffer } from "buffer";
 import React from "react";
 import PropTypes from "prop-types";
 import { View, FlatList } from "react-native";
-import { Text, ActivityIndicator } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Dialog,
+  Portal,
+  Paragraph,
+  Button
+} from "react-native-paper";
 import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
 import MDo from "@mdo-org/mdo-core/lib/strings";
 import { BlockHelper } from "@mdo-org/mdo-core";
@@ -182,6 +188,10 @@ export default class File extends React.Component {
     });
   }
 
+  resetError() {
+    this.setState({ error: null });
+  }
+
   renderLoading() {
     const { loading } = this.state;
     if (!loading) return null;
@@ -190,8 +200,21 @@ export default class File extends React.Component {
 
   renderError() {
     const { error } = this.state;
-    if (!error) return null;
-    return <Text>{error.message}</Text>;
+    const visible = !!(error && error.message && error.message.length);
+    const text = visible ? error.message : "";
+    return (
+      <Portal>
+        <Dialog visible={visible} onDismiss={() => this.resetError()}>
+          <Dialog.Title>Alert</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>{text}</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => this.resetError()}>Done</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    );
   }
 
   renderHeader() {
