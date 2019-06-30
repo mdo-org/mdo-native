@@ -7,13 +7,20 @@ import { View, FlatList } from "react-native";
 import { Text, ActivityIndicator } from "react-native-paper";
 import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
 import MDo from "@mdo-org/mdo-core/lib/strings";
+import { BlockHelper } from "@mdo-org/mdo-core";
 import { DateTime } from "luxon";
 import Header from "../Header";
 import Block from "../Block";
 
+// I'm getting rid of PADDING blocks and converting each block to a string, to
+// make manipulation easier.
+// In a future implementation, I might pass the whole Block object instead, to
+// implement things like tag highlighting/editing, etc.
 const parse = async text => {
   const blocks = await MDo.parse(text);
-  return blocks.filter(({ type }) => type !== "PADDING");
+  return blocks
+    .filter(({ type }) => type !== "PADDING")
+    .map(BlockHelper.toString);
 };
 
 const readDropboxFile = (dropbox, path) =>
@@ -82,7 +89,7 @@ export default class File extends React.Component {
     this.setState({ loading: true, error: null, activeIndex: null });
 
     try {
-      const text = await MDo.stringify(blocks);
+      const text = blocks.join("\n");
       const updatedText = await runMDoFlow(text);
       const metaData = await writeDropboxFile(dropbox, path, updatedText, rev);
       const newRev = metaData.rev || rev;
@@ -163,12 +170,12 @@ export default class File extends React.Component {
     });
   }
 
-  updateBlockText(blockToUpdate, newText) {
+  updateBlockText(indexToUpdate, newText) {
     const { blocks } = this.state;
     this.setState({
-      blocks: blocks.map(block => {
-        if (block === blockToUpdate) {
-          return { ...block, text: newText };
+      blocks: blocks.map((block, idx) => {
+        if (idx === indexToUpdate) {
+          return newText;
         }
         return block;
       })
@@ -215,7 +222,7 @@ export default class File extends React.Component {
             <Block
               block={item}
               onChangeText={newText => {
-                this.updateBlockText(item, newText);
+                this.updateBlockText(index, newText);
               }}
               onToggle={() => this.toggleBlock(index)}
               onEditToggle={() => this.toggleEditBlock(index)}

@@ -1,15 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TextInput, Card, Paragraph, Button } from "react-native-paper";
-import { BlockHelper } from "@mdo-org/mdo-core";
-
-function blockToString(block) {
-  // if the block has no tags, just render as is.
-  if (block.text.includes("{{type}}")) {
-    return BlockHelper.toString(block);
-  }
-  return block.text;
-}
 
 export default class Block extends React.Component {
   renderViewMode() {
@@ -21,7 +12,7 @@ export default class Block extends React.Component {
       onMoveDown,
       active
     } = this.props;
-    const [firstLine, ...rest] = blockToString(block).split("\n");
+    const [firstLine, ...rest] = block.split("\n");
 
     let body = null;
     let actions = null;
@@ -49,12 +40,11 @@ export default class Block extends React.Component {
 
   renderEditMode() {
     const { block, onEditToggle, onChangeText } = this.props;
-    const text = blockToString(block);
     return (
       <Card>
         <Card.Content>
           <TextInput
-            value={text}
+            value={block}
             multiline
             editable
             onChangeText={onChangeText}
@@ -80,10 +70,7 @@ Block.defaultProps = {
 };
 
 Block.propTypes = {
-  block: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired
-  }).isRequired,
+  block: PropTypes.string.isRequired,
   active: PropTypes.bool,
   editMode: PropTypes.bool,
   onToggle: PropTypes.func.isRequired,
