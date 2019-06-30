@@ -1,7 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
-    "@mdo-org/mdo-core": "^0.2.10",
+    "@mdo-org/mdo-core": "^0.2.11",
     "@mdo-org/mdo-flow-live-in-the-moment": "^0.2.10",
     "buffer": "^5.2.1",
     "dropbox": "^4.0.17",

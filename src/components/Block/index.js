@@ -1,21 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TextInput, Card, Paragraph, Button } from "react-native-paper";
-
-const blockTypeStringMap = new Map([
-  ["COMPLETE_TASK", "- [X]"],
-  ["INCOMPLETE_TASK", "- [ ]"],
-  ["COMMENT", "#"],
-  ["PADDING", ""]
-]);
-
-const replaceType = block => {
-  const { text, type } = block;
-  return {
-    ...block,
-    text: text.replace("{{type}}", blockTypeStringMap.get(type) || "")
-  };
-};
+import { BlockHelper } from "@mdo-org/mdo-core";
 
 export default class Block extends React.Component {
   renderViewMode() {
@@ -27,7 +13,7 @@ export default class Block extends React.Component {
       onMoveDown,
       active
     } = this.props;
-    const [firstLine, ...rest] = replaceType(block).text.split("\n");
+    const [firstLine, ...rest] = BlockHelper.toString(block).split("\n");
 
     let body = null;
     let actions = null;
@@ -55,7 +41,7 @@ export default class Block extends React.Component {
 
   renderEditMode() {
     const { block, onEditToggle, onChangeText } = this.props;
-    const { text } = replaceType(block);
+    const text = BlockHelper.toString(block);
     return (
       <Card>
         <Card.Content>
