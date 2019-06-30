@@ -2,6 +2,7 @@
   "expo": {
     "name": "MDo",
     "slug": "mdo",
+    "scheme": "mdo",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["android", "ios"],
