@@ -6,7 +6,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Text, ActivityIndicator } from "react-native-paper";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import FileRow from "./FileRow";
 import Header from "../Header";
 
@@ -65,11 +65,11 @@ export default class FileNavigator extends React.Component {
     const { onFilePick } = this.props;
     if (loading || error) return null;
     return (
-      <View>
+      <ScrollView>
         {files.map(file => (
           <FileRow key={file.name} file={file} onFilePick={onFilePick} />
         ))}
-      </View>
+      </ScrollView>
     );
   }
 

@@ -1,14 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Text, TouchableHighlight } from "react-native";
+import { List } from "react-native-paper";
 import { isDirectory } from "../../File";
 
 export default function FileRow({ file, onFilePick }) {
-  const name = isDirectory(file) ? `${file.name}/` : file.name;
+  const isDir = isDirectory(file);
+  const name = isDir ? `${file.name}/` : file.name;
+  const icon = isDir ? "folder" : "insert-drive-file";
   return (
-    <TouchableHighlight onPress={() => onFilePick(file)}>
-      <Text>{name}</Text>
-    </TouchableHighlight>
+    <List.Item
+      title={name}
+      onPress={() => onFilePick(file)}
+      left={() => <List.Icon icon={icon} />}
+    />
   );
 }
 
