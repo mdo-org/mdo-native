@@ -87,7 +87,7 @@ export default class File extends React.Component {
     this.loadFile();
   }
 
-  async onRunMDo() {
+  async onSave() {
     const { dropbox } = this.props;
     const { loading, blocks, rev, path } = this.state;
 
@@ -233,13 +233,13 @@ export default class File extends React.Component {
   renderHeader() {
     const { onGoBack, onLogout } = this.props;
     const { path, blocks } = this.state;
-    const runMDoCB = blocks && blocks.length ? () => this.onRunMDo() : null;
+    const saveCallback = blocks && blocks.length ? () => this.onSave() : null;
     return (
       <Header
         subtitle={path}
         onGoBack={onGoBack}
         onLogout={onLogout}
-        onRunMDo={runMDoCB}
+        onSave={saveCallback}
       />
     );
   }
