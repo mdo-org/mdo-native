@@ -5,8 +5,14 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Text, ActivityIndicator } from "react-native-paper";
-import { View, ScrollView } from "react-native";
+import {
+  Portal,
+  Dialog,
+  Paragraph,
+  Button,
+  ActivityIndicator
+} from "react-native-paper";
+import { View, ScrollView, RefreshControl } from "react-native";
 import FileRow from "./FileRow";
 import Header from "../Header";
 
@@ -21,17 +27,17 @@ export default class FileNavigator extends React.Component {
   }
 
   componentDidMount() {
-    this.loadDir();
+    this.load();
   }
 
   componentDidUpdate(prevProps) {
     const { path } = this.props;
     if (prevProps.path !== path) {
-      this.loadDir();
+      this.load();
     }
   }
 
-  loadDir() {
+  load() {
     const { loading } = this.state;
     const { dropbox, path } = this.props;
 
@@ -48,16 +54,33 @@ export default class FileNavigator extends React.Component {
       });
   }
 
-  renderLoading() {
-    const { loading } = this.state;
-    if (!loading) return null;
-    return <ActivityIndicator animating style={{ marginTop: 20 }} />;
+  resetError() {
+    this.setState({ error: null });
   }
 
   renderError() {
     const { error } = this.state;
-    if (!error) return null;
-    return <Text>{error.message}</Text>;
+    const visible = !!(error && error.message && error.message.length);
+    const text = visible ? error.message : "";
+    return (
+      <Portal>
+        <Dialog visible={visible} onDismiss={() => this.resetError()}>
+          <Dialog.Title>Alert</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>{text}</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => this.resetError()}>Done</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    );
+  }
+
+  renderLoading() {
+    const { loading } = this.state;
+    if (!loading) return null;
+    return <ActivityIndicator animating style={{ marginTop: 20 }} />;
   }
 
   renderContent() {
@@ -65,7 +88,11 @@ export default class FileNavigator extends React.Component {
     const { onFilePick } = this.props;
     if (loading || error) return null;
     return (
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={() => this.load()} />
+        }
+      >
         {files.map(file => (
           <FileRow key={file.name} file={file} onFilePick={onFilePick} />
         ))}
@@ -89,8 +116,8 @@ export default class FileNavigator extends React.Component {
     return (
       <View>
         {this.renderHeader()}
-        {this.renderLoading()}
         {this.renderError()}
+        {this.renderLoading()}
         {this.renderContent()}
       </View>
     );
