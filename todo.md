@@ -1,9 +1,5 @@
 # To-Do
 
-- [ ] add "Undo Changes" button to File Editor
-
-  - add a confirmation dialog
-
 - [ ] allow creating new files.
 - [ ] auto-save when file is exit or screen is blocked.
       I want to make sure local changes are not lost if the user forgets to press save

@@ -3,7 +3,7 @@
 import { Buffer } from "buffer";
 import React from "react";
 import PropTypes from "prop-types";
-import { View, FlatList, RefreshControl } from "react-native";
+import { Alert, View, FlatList, RefreshControl } from "react-native";
 import { Dialog, Portal, Paragraph, Button } from "react-native-paper";
 import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
 import MDo from "@mdo-org/mdo-core/lib/strings";
@@ -99,6 +99,25 @@ export default class File extends React.Component {
     }
   }
 
+  reset() {
+    const { loading } = this.state;
+    if (loading) return null;
+    return Alert.alert(
+      "Discard Changes",
+      "Are you sure you want to discard all changes done to the file?",
+      [
+        { text: "Cancel", onPress: () => false, style: "cancel" },
+        {
+          text: "Discard Changes",
+          onPress: () => {
+            this.load({ discardChanges: true });
+          }
+        }
+      ],
+      { cancelable: true }
+    );
+  }
+
   async save() {
     const { dropbox } = this.props;
     const { loading, blocks, rev, path } = this.state;
@@ -125,17 +144,22 @@ export default class File extends React.Component {
     }
   }
 
-  async load() {
+  async load({ discardChanges } = {}) {
     const { loading, path, hasPendingChanges } = this.state;
     const { dropbox } = this.props;
 
     if (loading) return;
 
-    if (hasPendingChanges) {
+    if (hasPendingChanges && !discardChanges) {
       await this.save();
     }
 
-    this.setState({ loading: true, error: null });
+    this.setState({
+      loading: true,
+      error: null,
+      activeIndex: null,
+      activeIsEditing: false
+    });
 
     try {
       const { text, rev } = await readDropboxFile(dropbox, path);
@@ -238,6 +262,7 @@ export default class File extends React.Component {
     const { path, blocks } = this.state;
     const onSave = blocks && blocks.length ? () => this.save() : null;
     const onMDo = blocks && blocks.length ? () => this.runMDo() : null;
+    const onReset = blocks && blocks.length ? () => this.reset() : null;
     return (
       <Header
         subtitle={path}
@@ -245,6 +270,7 @@ export default class File extends React.Component {
         onLogout={onLogout}
         onMDo={onMDo}
         onSave={onSave}
+        onReset={onReset}
       />
     );
   }
