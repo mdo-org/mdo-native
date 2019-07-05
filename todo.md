@@ -1,7 +1,5 @@
 # To-Do
 
-- [ ] allow reloading a file
-- [ ] add confirmation dialog for "Log out" option
 - [ ] add "Undo Changes" button to File Editor
 
   - add a confirmation dialog

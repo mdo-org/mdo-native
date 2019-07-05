@@ -1,6 +1,6 @@
 import React from "react";
 import { Dropbox } from "dropbox";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import {
   Provider as PaperProvider,
   Text,
@@ -65,8 +65,21 @@ class App extends React.Component {
   }
 
   logout() {
-    Storage.deleteDropboxToken();
-    this.setState({ dropbox: null });
+    Alert.alert(
+      "Log Out",
+      "Are you sure you want to log out?",
+      [
+        { text: "Cancel", onPress: () => false, style: "cancel" },
+        {
+          text: "Log Out",
+          onPress: () => {
+            Storage.deleteDropboxToken();
+            this.setState({ dropbox: null });
+          }
+        }
+      ],
+      { cancelable: true }
+    );
   }
 
   selectFile(file) {
