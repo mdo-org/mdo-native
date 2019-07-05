@@ -3,14 +3,8 @@
 import { Buffer } from "buffer";
 import React from "react";
 import PropTypes from "prop-types";
-import { View, FlatList } from "react-native";
-import {
-  ActivityIndicator,
-  Dialog,
-  Portal,
-  Paragraph,
-  Button
-} from "react-native-paper";
+import { View, FlatList, RefreshControl } from "react-native";
+import { Dialog, Portal, Paragraph, Button } from "react-native-paper";
 import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
 import MDo from "@mdo-org/mdo-core/lib/strings";
 import { BlockHelper } from "@mdo-org/mdo-core";
@@ -79,15 +73,16 @@ export default class File extends React.Component {
       activeIndex: null, // MDo block that is currently active/expanded
       activeIsEditing: false, // Is the active block in edit mode?
       path, // path might change if there is a conflict, so I'm copying to state
-      rev: null // provided by dropbox to identify current version of the file
+      rev: null, // provided by dropbox to identify current version of the file
+      hasPendingChanges: false // has the user made any changes since last save?
     };
   }
 
   componentDidMount() {
-    this.loadFile();
+    this.load();
   }
 
-  async onMDo() {
+  async runMDo() {
     const { loading, blocks } = this.state;
     if (loading) return null;
     try {
@@ -104,7 +99,7 @@ export default class File extends React.Component {
     }
   }
 
-  async onSave() {
+  async save() {
     const { dropbox } = this.props;
     const { loading, blocks, rev, path } = this.state;
 
@@ -119,7 +114,8 @@ export default class File extends React.Component {
       return this.setState({
         loading: false,
         rev: newRev,
-        path: newPath
+        path: newPath,
+        hasPendingChanges: false
       });
     } catch (err) {
       return this.setState({
@@ -129,29 +125,32 @@ export default class File extends React.Component {
     }
   }
 
-  loadFile() {
-    const { loading, path } = this.state;
+  async load() {
+    const { loading, path, hasPendingChanges } = this.state;
     const { dropbox } = this.props;
 
     if (loading) return;
+
+    if (hasPendingChanges) {
+      await this.save();
+    }
+
     this.setState({ loading: true, error: null });
 
-    readDropboxFile(dropbox, path)
-      .then(({ text, rev }) => {
-        parse(text)
-          .then(blocks => {
-            this.setState({ loading: false, error: null, blocks, rev });
-          })
-          .catch(err => {
-            this.setState({ loading: false, error: err, blocks: [text], rev });
-          });
-      })
-      .catch(err => {
-        this.setState({
-          loading: false,
-          error: formatDropboxError(err, "loading file")
-        });
+    try {
+      const { text, rev } = await readDropboxFile(dropbox, path);
+      try {
+        const blocks = await parse(text);
+        this.setState({ loading: false, error: null, blocks, rev });
+      } catch (err) {
+        this.setState({ loading: false, error: err, blocks: [text], rev });
+      }
+    } catch (err) {
+      this.setState({
+        loading: false,
+        error: formatDropboxError(err, "loading file")
       });
+    }
   }
 
   toggleBlock(index) {
@@ -178,7 +177,8 @@ export default class File extends React.Component {
         blocks[index - 1],
         ...blocks.slice(index + 1)
       ].filter(Boolean),
-      activeIndex: activeIndex === index ? index - 1 : activeIndex
+      activeIndex: activeIndex === index ? index - 1 : activeIndex,
+      hasPendingChanges: true
     });
   }
 
@@ -192,7 +192,8 @@ export default class File extends React.Component {
         blocks[index],
         ...blocks.slice(index + 2)
       ].filter(Boolean),
-      activeIndex: activeIndex === index ? index + 1 : activeIndex
+      activeIndex: activeIndex === index ? index + 1 : activeIndex,
+      hasPendingChanges: true
     });
   }
 
@@ -204,18 +205,13 @@ export default class File extends React.Component {
           return newText;
         }
         return block;
-      })
+      }),
+      hasPendingChanges: true
     });
   }
 
   resetError() {
     this.setState({ error: null });
-  }
-
-  renderLoading() {
-    const { loading } = this.state;
-    if (!loading) return null;
-    return <ActivityIndicator animating style={{ marginTop: 20 }} />;
   }
 
   renderError() {
@@ -240,21 +236,21 @@ export default class File extends React.Component {
   renderHeader() {
     const { onGoBack, onLogout } = this.props;
     const { path, blocks } = this.state;
-    const saveCallback = blocks && blocks.length ? () => this.onSave() : null;
-    const mdoCallback = blocks && blocks.length ? () => this.onMDo() : null;
+    const onSave = blocks && blocks.length ? () => this.save() : null;
+    const onMDo = blocks && blocks.length ? () => this.runMDo() : null;
     return (
       <Header
         subtitle={path}
         onGoBack={onGoBack}
         onLogout={onLogout}
-        onMDo={mdoCallback}
-        onSave={saveCallback}
+        onMDo={onMDo}
+        onSave={onSave}
       />
     );
   }
 
   renderContent() {
-    const { blocks, activeIndex, activeIsEditing } = this.state;
+    const { blocks, activeIndex, activeIsEditing, loading } = this.state;
     return (
       <FlatList
         data={blocks}
@@ -278,6 +274,9 @@ export default class File extends React.Component {
             />
           );
         }}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={() => this.load()} />
+        }
       />
     );
   }
@@ -286,7 +285,6 @@ export default class File extends React.Component {
     return (
       <View>
         {this.renderHeader()}
-        {this.renderLoading()}
         {this.renderError()}
         {this.renderContent()}
       </View>
