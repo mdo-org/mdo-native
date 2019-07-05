@@ -87,6 +87,23 @@ export default class File extends React.Component {
     this.loadFile();
   }
 
+  async onMDo() {
+    const { loading, blocks } = this.state;
+    if (loading) return null;
+    try {
+      const text = blocks.join("\n");
+      const updatedText = await runMDoFlow(text);
+      const newBlocks = await parse(updatedText);
+      return this.setState({
+        blocks: newBlocks,
+        activeIndex: null,
+        activeIsEditing: false
+      });
+    } catch (err) {
+      return this.setState({ error: err });
+    }
+  }
+
   async onSave() {
     const { dropbox } = this.props;
     const { loading, blocks, rev, path } = this.state;
@@ -95,22 +112,12 @@ export default class File extends React.Component {
     this.setState({ loading: true, error: null, activeIndex: null });
 
     try {
-      let updatedText = blocks.join("\n");
-
-      // if MDo validation fails, display an error but save anyways.
-      try {
-        updatedText = await runMDoFlow(updatedText);
-      } catch (err) {
-        this.setState({ error: err });
-      }
-
-      const metaData = await writeDropboxFile(dropbox, path, updatedText, rev);
+      const text = blocks.join("\n");
+      const metaData = await writeDropboxFile(dropbox, path, text, rev);
       const newRev = metaData.rev || rev;
       const newPath = metaData.path_lower || path;
-      const newBlocks = await parse(updatedText);
       return this.setState({
         loading: false,
-        blocks: newBlocks,
         rev: newRev,
         path: newPath
       });
@@ -234,11 +241,13 @@ export default class File extends React.Component {
     const { onGoBack, onLogout } = this.props;
     const { path, blocks } = this.state;
     const saveCallback = blocks && blocks.length ? () => this.onSave() : null;
+    const mdoCallback = blocks && blocks.length ? () => this.onMDo() : null;
     return (
       <Header
         subtitle={path}
         onGoBack={onGoBack}
         onLogout={onLogout}
+        onMDo={mdoCallback}
         onSave={saveCallback}
       />
     );

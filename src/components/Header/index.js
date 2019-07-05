@@ -24,10 +24,10 @@ class Header extends React.Component {
   }
 
   renderMenu() {
-    const { theme, onLogout, onSave } = this.props;
+    const { theme, onLogout, onSave, onMDo } = this.props;
     const { menuVisible } = this.state;
 
-    if (!onLogout && !onSave) return null;
+    if (!onLogout && !onSave && !onSave) return null;
 
     return (
       <Menu
@@ -41,6 +41,12 @@ class Header extends React.Component {
           />
         }
       >
+        {onMDo && (
+          <Menu.Item
+            onPress={() => this.runAndCloseMenu(onMDo)}
+            title="Run MDo"
+          />
+        )}
         {onSave && (
           <Menu.Item
             onPress={() => this.runAndCloseMenu(onSave)}
@@ -73,6 +79,7 @@ Header.defaultProps = {
   subtitle: "",
   onGoBack: null,
   onLogout: null,
+  onMDo: null,
   onSave: null
 };
 
@@ -81,6 +88,7 @@ Header.propTypes = {
   onGoBack: PropTypes.func,
   onLogout: PropTypes.func,
   onSave: PropTypes.func,
+  onMDo: PropTypes.func,
   theme: PropTypes.shape({
     colors: PropTypes.shape({
       primary: PropTypes.string.isRequired
