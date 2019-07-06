@@ -2,7 +2,7 @@ import { AuthSession } from "expo";
 
 const APP_KEY = "8hq4uhvyl0xlgmj";
 
-const login = async () => {
+const dropboxLogin = async () => {
   const authUrl = [
     "https://www.dropbox.com/1/oauth2/authorize",
     "?response_type=token",
@@ -23,6 +23,4 @@ const login = async () => {
   return response.params.access_token;
 };
 
-export default {
-  login
-};
+export default dropboxLogin;

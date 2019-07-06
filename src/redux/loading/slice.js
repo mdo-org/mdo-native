@@ -1,6 +1,6 @@
 import { createSlice } from "redux-starter-kit";
 
-const isLoading = createSlice({
+export default createSlice({
   slice: "isLoading",
   initialState: false,
   reducers: {
@@ -8,5 +8,3 @@ const isLoading = createSlice({
     stop: () => false
   }
 });
-
-export default isLoading;

@@ -1,18 +1,8 @@
-import { createSlice } from "redux-starter-kit";
-import fileSystem from "../fileSystem";
+import slice from "./slice";
 
-const currentNode = createSlice({
-  slice: "currentNode",
-  initialState: null,
-  reducers: {},
-  extraReducers: {
-    // reset state when a new fileSystem is selected
-    [fileSystem.actions.set]: () => ({
-      path: "/",
-      type: "directory",
-      contents: null
-    })
-  }
-});
+export default {
+  reducer: slice.reducer,
 
-export default currentNode;
+  // selectors
+  isFile: state => !!(state.currentNode && state.currentNode.type === "file")
+};

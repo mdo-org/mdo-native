@@ -1,12 +1,12 @@
-import { createSlice } from "redux-starter-kit";
+import slice from "./slice";
 
-const errors = createSlice({
-  slice: "errors",
-  initialState: [],
-  reducers: {
-    push: (state, { payload: { error } }) => state.errors.push(error),
-    reset: () => []
-  }
-});
+export default {
+  reducer: slice.reducer,
 
-export default errors;
+  // actions
+  push: slice.actions.push,
+  reset: slice.actions.reset,
+
+  // selectors
+  allMessages: state => state.errors.map(err => err.message).filter(Boolean)
+};
