@@ -21,6 +21,10 @@ React Native app for [MDo](https://mdo-org.github.io/mdo/).
 
 Note: to "shake" your android virtual device, press `Ctrl + m` (on Linux). You'll see the React Native dev menu pop up.
 
+### Debugging
+
+Follow Expo's instructions for [Debugging Redux](https://docs.expo.io/versions/v33.0.0/workflow/debugging/#debugging-redux).
+
 ### Linting / Formatting Code
 
 This project is configured to run [prettier](https://github.com/prettier/prettier) when you do a `git add` (using [husky](https://www.npmjs.com/package/husky) and [lint-staged](https://www.npmjs.com/package/lint-staged)), so you don't need to worry about formatting code.

@@ -1,0 +1,28 @@
+import { AuthSession } from "expo";
+
+const APP_KEY = "8hq4uhvyl0xlgmj";
+
+const login = async () => {
+  const authUrl = [
+    "https://www.dropbox.com/1/oauth2/authorize",
+    "?response_type=token",
+    `&client_id=${APP_KEY}`,
+    `&redirect_uri=${AuthSession.getRedirectUrl()}`
+  ].join("");
+
+  const response = await AuthSession.startAsync({ authUrl });
+
+  if (response.type !== "success") {
+    throw new Error("Unexpected login response.type", response.type);
+  }
+
+  if (!response.params || !response.params.access_token) {
+    throw new Error("No access_token was returned");
+  }
+
+  return response.params.access_token;
+};
+
+export default {
+  login
+};
