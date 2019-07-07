@@ -144,7 +144,7 @@ export default class File extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         {this.renderHeader()}
         {this.renderContent()}
       </View>

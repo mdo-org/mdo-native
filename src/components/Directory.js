@@ -44,7 +44,7 @@ export default class Directory extends React.Component {
   render() {
     const { onRefresh } = this.props;
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         {this.renderHeader()}
         <ScrollView
           refreshControl={

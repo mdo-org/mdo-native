@@ -6,7 +6,7 @@ import Header from "./Header";
 
 export default function SelectFileSystem({ onDropboxLogin }) {
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Header />
       <Button onPress={onDropboxLogin} style={{ marginTop: 20 }}>
         Login with Dropbox
