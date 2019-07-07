@@ -1,11 +1,13 @@
 import { connect } from "react-redux";
 import currentNode from "../currentNode";
+import loading from "../loading";
 import File from "../../components/File";
 
 const mapStateToProps = state => ({
   path: currentNode.getPath(state),
   contents: currentNode.getContents(state),
-  hasPendingChanges: currentNode.hasPendingChanges(state)
+  hasPendingChanges: currentNode.hasPendingChanges(state),
+  isLoading: loading.isLoading(state)
 });
 
 const mapDispatchToProps = dispatch => ({

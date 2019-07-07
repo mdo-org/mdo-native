@@ -7,19 +7,16 @@ import DirectoryNode from "./DirectoryNode";
 
 export default class Directory extends React.Component {
   componentDidMount() {
-    this.refresh();
+    this.load();
   }
 
-  componentDidUpdate(prevProps) {
-    const { path } = this.props;
-    if (prevProps.path !== path) {
-      this.refresh();
-    }
+  componentDidUpdate() {
+    this.load();
   }
 
-  refresh() {
-    const { contents, onRefresh } = this.props;
-    if (!contents) onRefresh();
+  load() {
+    const { isLoading, contents, onRefresh } = this.props;
+    if (!contents && !isLoading) onRefresh();
   }
 
   renderHeader() {
@@ -62,10 +59,12 @@ export default class Directory extends React.Component {
 }
 
 Directory.defaultProps = {
+  isLoading: false,
   contents: null
 };
 
 Directory.propTypes = {
+  isLoading: PropTypes.bool,
   path: PropTypes.string.isRequired,
   contents: PropTypes.arrayOf(
     PropTypes.shape({

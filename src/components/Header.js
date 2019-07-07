@@ -92,7 +92,9 @@ class Header extends React.Component {
 
 Header.defaultProps = {
   subtitle: "",
+  includeBackButton: false,
   onGoBack: null,
+  includeLogoutButton: false,
   onLogout: null,
   menuItems: []
 };
@@ -108,9 +110,9 @@ Header.propTypes = {
   ),
 
   // redux props
-  includeBackButton: PropTypes.bool.isRequired,
+  includeBackButton: PropTypes.bool,
   onGoBack: PropTypes.func,
-  includeLogoutButton: PropTypes.bool.isRequired,
+  includeLogoutButton: PropTypes.bool,
   onLogout: PropTypes.func,
 
   // other

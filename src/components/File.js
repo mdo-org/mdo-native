@@ -17,9 +17,13 @@ export default class File extends React.Component {
     this.load();
   }
 
+  componentDidUpdate() {
+    this.load();
+  }
+
   load() {
-    const { contents, onRefresh } = this.props;
-    if (!contents) onRefresh();
+    const { isLoading, contents, onRefresh } = this.props;
+    if (!contents && !isLoading) onRefresh();
   }
 
   toggleBlock(index) {
@@ -149,10 +153,12 @@ export default class File extends React.Component {
 }
 
 File.defaultProps = {
+  isLoading: false,
   contents: null
 };
 
 File.propTypes = {
+  isLoading: PropTypes.bool,
   path: PropTypes.string.isRequired,
   contents: PropTypes.arrayOf(PropTypes.string),
   hasPendingChanges: PropTypes.bool.isRequired,

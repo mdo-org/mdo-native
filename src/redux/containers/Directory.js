@@ -1,10 +1,12 @@
 import { connect } from "react-redux";
 import currentNode from "../currentNode";
+import loading from "../loading";
 import DirectoryComponent from "../../components/Directory";
 
 const mapStateToProps = state => ({
   path: currentNode.getPath(state),
-  contents: currentNode.getContents(state)
+  contents: currentNode.getContents(state),
+  isLoading: loading.isLoading(state)
 });
 
 const mapDispatchToProps = dispatch => ({

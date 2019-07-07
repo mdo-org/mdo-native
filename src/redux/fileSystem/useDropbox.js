@@ -20,7 +20,7 @@ const useDropbox = () => async (dispatch, getState) => {
     const accessToken = await Dropbox.login();
     dispatch(fileSystem.set({ type: "dropbox", accessToken }));
   } catch (err) {
-    dispatch(errors.push({ error: err, description: "logging in to Dropbox" }));
+    dispatch(errors.push({ error: err, description: "logging into Dropbox" }));
   } finally {
     dispatch(loading.stop());
   }
