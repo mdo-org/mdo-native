@@ -1,12 +1,14 @@
 import slice from "./slice";
 import refresh from "./refresh";
+import save from "./save";
 import {
   isFile,
   isDir,
   isRoot,
   getPath,
   getType,
-  getContents
+  getContents,
+  getRev
 } from "./selectors";
 
 export default {
@@ -22,6 +24,7 @@ export default {
   updateBlockText: slice.actions.updateBlockText,
   moveBlockUp: slice.actions.moveBlockUp,
   moveBlockDown: slice.actions.moveBlockDown,
+  save,
 
   // selectors
   isFile,
@@ -29,5 +32,6 @@ export default {
   isRoot,
   getPath,
   getType,
-  getContents
+  getContents,
+  getRev
 };

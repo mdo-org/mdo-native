@@ -56,9 +56,20 @@ export default class File extends React.Component {
     });
   }
 
+  save() {
+    const { onSave } = this.props;
+    onSave();
+    this.setState({ activeIndex: null });
+  }
+
   renderHeader() {
     const { path } = this.props;
-    return <Header subtitle={path} />;
+    return (
+      <Header
+        subtitle={path}
+        menuItems={[{ title: "Save", onPress: () => this.save() }]}
+      />
+    );
   }
 
   renderContent() {
@@ -109,6 +120,7 @@ File.defaultProps = {
 File.propTypes = {
   path: PropTypes.string.isRequired,
   contents: PropTypes.arrayOf(PropTypes.string),
+  onSave: PropTypes.func.isRequired,
   onRefresh: PropTypes.func.isRequired,
   onUpdateBlockText: PropTypes.func.isRequired,
   onMoveBlockUp: PropTypes.func.isRequired,

@@ -23,3 +23,7 @@ export function getContents(state) {
   if (!state.currentNode) return null;
   return state.currentNode.contents;
 }
+
+export function getRev(state) {
+  return state.currentNode && state.currentNode.rev;
+}
