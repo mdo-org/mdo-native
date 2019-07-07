@@ -1,5 +1,6 @@
 import slice from "./slice";
 import refresh from "./refresh";
+import runMDo from "./runMDo";
 import save from "./save";
 import {
   isFile,
@@ -25,6 +26,7 @@ export default {
   updateBlockText: slice.actions.updateBlockText,
   moveBlockUp: slice.actions.moveBlockUp,
   moveBlockDown: slice.actions.moveBlockDown,
+  runMDo,
   save,
 
   // selectors

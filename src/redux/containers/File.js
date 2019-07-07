@@ -8,6 +8,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  onRunMDo: () => dispatch(currentNode.runMDo()),
   onSave: () => dispatch(currentNode.save()),
   onRefresh: () => dispatch(currentNode.refresh()),
   onUpdateBlockText: (index, text) =>

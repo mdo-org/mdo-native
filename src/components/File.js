@@ -56,10 +56,16 @@ export default class File extends React.Component {
     });
   }
 
+  runMDo() {
+    const { onRunMDo } = this.props;
+    onRunMDo();
+    this.setState({ activeIndex: null, activeIsEditing: false });
+  }
+
   save() {
     const { onSave } = this.props;
     onSave();
-    this.setState({ activeIndex: null });
+    this.setState({ activeIndex: null, activeIsEditing: false });
   }
 
   async saveAndRefresh() {
@@ -73,7 +79,10 @@ export default class File extends React.Component {
     return (
       <Header
         subtitle={path}
-        menuItems={[{ title: "Save", onPress: () => this.save() }]}
+        menuItems={[
+          { title: "Run MDo", onPress: () => this.runMDo() },
+          { title: "Save", onPress: () => this.save() }
+        ]}
       />
     );
   }
@@ -129,6 +138,7 @@ File.defaultProps = {
 File.propTypes = {
   path: PropTypes.string.isRequired,
   contents: PropTypes.arrayOf(PropTypes.string),
+  onRunMDo: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   onRefresh: PropTypes.func.isRequired,
   onUpdateBlockText: PropTypes.func.isRequired,
