@@ -1,5 +1,4 @@
 import { Dropbox } from "dropbox";
-import parseTextToBlocks from "./parseTextToBlocks";
 
 const readFileBlob = fileBlob =>
   new Promise((resolve, reject) => {
@@ -22,6 +21,5 @@ export default async function dropboxLoadFile({ accessToken, path }) {
   const response = await dropbox.filesDownload({ path });
   const { rev, fileBlob } = response;
   const text = await readFileBlob(fileBlob);
-  const contents = await parseTextToBlocks(text);
-  return { rev, contents };
+  return { rev, text };
 }

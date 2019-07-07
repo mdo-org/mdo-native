@@ -1,16 +1,22 @@
-import dropboxLoadDir from "./dropboxLoadDir";
-import dropboxLoadFile from "./dropboxLoadFile";
 import slice from "./slice";
 import loading from "../loading";
 import errors from "../errors";
 import fileSystem from "../fileSystem";
+import Dropbox from "../../Dropbox";
+import MDo from "../../MDo";
 import { isDir, isFile, getType, getPath } from "./selectors";
 
 const currentNode = slice.actions;
 
+const loadFile = async ({ accessToken, path }) => {
+  const { rev, text } = await Dropbox.loadFile({ accessToken, path });
+  const contents = await MDo.parse(text);
+  return { rev, contents };
+};
+
 const getLoadFunction = state => {
-  if (isDir(state)) return dropboxLoadDir;
-  if (isFile(state)) return dropboxLoadFile;
+  if (isDir(state)) return Dropbox.loadDir;
+  if (isFile(state)) return loadFile;
   return null;
 };
 

@@ -1,7 +1,7 @@
-import dropboxLogin from "./dropboxLogin";
 import loading from "../loading";
 import slice from "./slice";
 import errors from "../errors";
+import Dropbox from "../../Dropbox";
 
 const fileSystem = slice.actions;
 
@@ -17,7 +17,7 @@ const useDropbox = () => async (dispatch, getState) => {
   dispatch(loading.start());
 
   try {
-    const accessToken = await dropboxLogin();
+    const accessToken = await Dropbox.login();
     dispatch(fileSystem.set({ type: "dropbox", accessToken }));
   } catch (err) {
     dispatch(errors.push({ error: err, description: "logging in to Dropbox" }));

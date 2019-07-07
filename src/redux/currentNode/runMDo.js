@@ -1,18 +1,10 @@
-import MDoFlow from "@mdo-org/mdo-flow-live-in-the-moment/lib/strings";
-import { DateTime } from "luxon";
 import slice from "./slice";
 import loading from "../loading";
 import errors from "../errors";
-import parseTextToBlocks from "./parseTextToBlocks";
 import { getContents } from "./selectors";
+import MDo from "../../MDo";
 
 const currentNode = slice.actions;
-
-const runMDoFlow = text => {
-  const now = DateTime.local();
-  const options = { time: now.toString(), timezone: now.zoneName };
-  return MDoFlow(text, options);
-};
 
 const runMDo = () => async (dispatch, getState) => {
   const state = getState();
@@ -27,9 +19,9 @@ const runMDo = () => async (dispatch, getState) => {
   const text = getContents(state).join("\n");
 
   try {
-    const updatedText = await runMDoFlow(text);
+    const updatedText = await MDo.run(text);
     if (text !== updatedText) {
-      const contents = await parseTextToBlocks(updatedText);
+      const contents = await MDo.parse(updatedText);
       dispatch(currentNode.update({ contents, hasPendingChanges: true }));
     }
   } catch (err) {

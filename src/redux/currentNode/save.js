@@ -1,8 +1,8 @@
-import dropboxWriteFile from "./dropboxWriteFile";
 import slice from "./slice";
 import fileSystem from "../fileSystem";
 import loading from "../loading";
 import errors from "../errors";
+import Dropbox from "../../Dropbox";
 import { getPath, getContents, getRev, hasPendingChanges } from "./selectors";
 
 const currentNode = slice.actions;
@@ -28,11 +28,11 @@ const save = () => async (dispatch, getState) => {
   const rev = getRev(state);
 
   try {
-    const metaData = await dropboxWriteFile({ accessToken, path, text, rev });
+    const metaData = await Dropbox.writeFile({ accessToken, path, text, rev });
     dispatch(
       currentNode.update({
-        rev: metaData.rev || rev,
-        path: metaData.path_lower || path,
+        rev: metaData.rev,
+        path: metaData.path,
         hasPendingChanges: false
       })
     );
