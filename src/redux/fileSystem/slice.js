@@ -12,6 +12,7 @@ export default createSlice({
         throw new Error("accessToken is required");
       }
       return { type, accessToken };
-    }
+    },
+    reset: () => null
   }
 });

@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { View } from "react-native";
+import { Portal } from "react-native-paper";
 
 import Errors from "../redux/containers/Errors";
 import Loading from "../redux/containers/Loading";
@@ -20,8 +21,10 @@ export default class Root extends React.Component {
   render() {
     return (
       <View style={{ backgroundColor: "white", flex: 1 }}>
-        <Errors />
-        <Loading />
+        <Portal>
+          <Errors />
+          <Loading />
+        </Portal>
         {this.renderContent()}
       </View>
     );

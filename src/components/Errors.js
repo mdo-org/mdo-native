@@ -1,23 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button, Dialog, Portal, Paragraph } from "react-native-paper";
+import { Button, Dialog, Paragraph } from "react-native-paper";
 
 export default function Errors({ errors, onErrorsDismiss }) {
   const visible = errors && errors.length;
   return (
-    <Portal>
-      <Dialog visible={visible} onDismiss={onErrorsDismiss}>
-        <Dialog.Title>Alert</Dialog.Title>
-        <Dialog.Content>
-          {errors.map(err => (
-            <Paragraph>{err}</Paragraph>
-          ))}
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={onErrorsDismiss}>Done</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+    <Dialog visible={visible} onDismiss={onErrorsDismiss}>
+      <Dialog.Title>Alert</Dialog.Title>
+      <Dialog.Content>
+        {errors.map(err => (
+          <Paragraph key={err}>{err}</Paragraph>
+        ))}
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Button onPress={onErrorsDismiss}>Done</Button>
+      </Dialog.Actions>
+    </Dialog>
   );
 }
 

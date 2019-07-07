@@ -29,6 +29,7 @@ const store = createStore(
 );
 
 const persistor = persistStore(store);
+// persistor.purge();
 
 export default function Main() {
   return (

@@ -1,14 +1,15 @@
 import slice from "./slice";
 import useDropbox from "./useDropbox";
-import isMounted from "./isMounted";
 
 export default {
   reducer: slice.reducer,
 
   // actions
   set: slice.actions.set,
+  reset: slice.actions.reset,
   useDropbox,
 
   // selectors
-  isMounted
+  isMounted: state => !!state.fileSystem,
+  getAccessToken: state => state.fileSystem.accessToken
 };

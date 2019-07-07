@@ -8,5 +8,5 @@ export default {
   reset: slice.actions.reset,
 
   // selectors
-  allMessages: state => state.errors.map(err => err.message).filter(Boolean)
+  all: state => state.errors.filter(Boolean)
 };

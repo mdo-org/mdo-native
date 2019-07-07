@@ -36,12 +36,13 @@ App actions that can be triggered from the UI:
 fileSystem.useDropbox(); // mounts Dropbox as the file system, triggers the dropbox login process, triggers loading of the root directory
 fileSystem.openDir("/hello"); // navigates to a new directory in the fileSystem and loads its contents
 fileSystem.openFile("/hello/world.md"); // navigates to a new file in the fileSystem and loads its contents
+fileSystem.back(); // navigates up a level to the previous directory
 
 // file actions
 currentNode.updateContents(["hello", "world"]); // updates the file's contents
 currentNode.runMDo(); // runs MDo on the current file. updates the file's contents
 currentNode.save(); // persist changes to file system
-currentNode.reload({ saveChanges: true }); // loads the file from the file system. if saveChanges is true, will run save() before loading
+currentNode.refresh({ saveChanges: true }); // loads the file from the file system. if saveChanges is true, will run save() before loading
 
 // directory actions
 currentNode.addFile({ name: "baz.md", contents: [] }); // adds a new file to the directory

@@ -20,12 +20,10 @@ const useDropbox = () => async (dispatch, getState) => {
     const accessToken = await dropboxLogin();
     dispatch(fileSystem.set({ type: "dropbox", accessToken }));
   } catch (err) {
-    dispatch(errors.push(err));
+    dispatch(errors.push({ error: err, description: "logging in to Dropbox" }));
   } finally {
     dispatch(loading.stop());
   }
 };
-
-useDropbox.toString = () => "useDropbox";
 
 export default useDropbox;

@@ -1,13 +1,79 @@
 import React from "react";
-import { View } from "react-native";
-import { Text } from "react-native-paper";
-import Header from "./Header";
+import PropTypes from "prop-types";
+import { View, ScrollView, RefreshControl } from "react-native";
+import { Paragraph } from "react-native-paper";
+import Header from "../redux/containers/Header";
+import DirectoryNode from "./DirectoryNode";
 
-export default function Directory() {
-  return (
-    <View>
-      <Header />
-      <Text>Directory</Text>
-    </View>
-  );
+export default class Directory extends React.Component {
+  componentDidMount() {
+    this.refresh();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { path } = this.props;
+    if (prevProps.path !== path) {
+      this.refresh();
+    }
+  }
+
+  refresh() {
+    const { contents, onRefresh } = this.props;
+    if (!contents) onRefresh();
+  }
+
+  renderHeader() {
+    const { path } = this.props;
+    return <Header subtitle={path} />;
+  }
+
+  renderContents() {
+    const { contents, onOpenNode } = this.props;
+    if (!contents) return null;
+    if (!contents.length) {
+      return (
+        <Paragraph style={{ marginLeft: 5 }}>The directory is empty.</Paragraph>
+      );
+    }
+    return contents.map(node => (
+      <DirectoryNode
+        key={node.path}
+        node={node}
+        onPress={() => onOpenNode(node)}
+      />
+    ));
+  }
+
+  render() {
+    const { onRefresh } = this.props;
+    return (
+      <View>
+        {this.renderHeader()}
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={onRefresh} />
+          }
+        >
+          {this.renderContents()}
+        </ScrollView>
+      </View>
+    );
+  }
 }
+
+Directory.defaultProps = {
+  contents: null
+};
+
+Directory.propTypes = {
+  path: PropTypes.string.isRequired,
+  contents: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      path: PropTypes.string.isRequired
+    })
+  ),
+  onRefresh: PropTypes.func.isRequired,
+  onOpenNode: PropTypes.func.isRequired
+};

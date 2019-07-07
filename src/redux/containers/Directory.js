@@ -1,10 +1,22 @@
 import { connect } from "react-redux";
-import Directory from "../../components/Directory";
+import currentNode from "../currentNode";
+import fileSystem from "../fileSystem";
+import loading from "../loading";
+import DirectoryComponent from "../../components/Directory";
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = () => ({});
+const mapStateToProps = state => ({
+  path: currentNode.path(state),
+  contents: currentNode.contents(state),
+  isLoading: loading.isLoading(state)
+});
+
+const mapDispatchToProps = dispatch => ({
+  onLogout: () => dispatch(fileSystem.reset()),
+  onRefresh: () => dispatch(currentNode.refresh()),
+  onOpenNode: node => dispatch(currentNode.set(node))
+});
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Directory);
+)(DirectoryComponent);
