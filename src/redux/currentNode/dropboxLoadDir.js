@@ -7,12 +7,16 @@ const getFileType = entry => {
   return "unknown";
 };
 
+const dropboxEntryToNode = entry => ({
+  type: getFileType(entry),
+  path: entry.path_lower,
+  name: entry.name
+});
+
 export default async function dropboxLoadDir({ accessToken, path }) {
   const dropbox = new Dropbox({ fetch: global.fetch, accessToken });
   const { entries } = await dropbox.filesListFolder({ path });
-  return entries.map(entry => ({
-    type: getFileType(entry),
-    path: entry.path_lower,
-    name: entry.name
-  }));
+  return {
+    contents: entries.map(dropboxEntryToNode)
+  };
 }
