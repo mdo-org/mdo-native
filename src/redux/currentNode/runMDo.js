@@ -28,8 +28,10 @@ const runMDo = () => async (dispatch, getState) => {
 
   try {
     const updatedText = await runMDoFlow(text);
-    const contents = await parseTextToBlocks(updatedText);
-    dispatch(currentNode.update({ contents }));
+    if (text !== updatedText) {
+      const contents = await parseTextToBlocks(updatedText);
+      dispatch(currentNode.update({ contents, hasPendingChanges: true }));
+    }
   } catch (err) {
     dispatch(
       errors.push({ error: err, description: "running MDo on the file" })

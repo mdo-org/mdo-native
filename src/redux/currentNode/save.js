@@ -32,7 +32,8 @@ const save = () => async (dispatch, getState) => {
     dispatch(
       currentNode.update({
         rev: metaData.rev || rev,
-        path: metaData.path_lower || path
+        path: metaData.path_lower || path,
+        hasPendingChanges: false
       })
     );
   } catch (err) {

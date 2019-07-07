@@ -34,7 +34,12 @@ const refresh = () => async (dispatch, getState) => {
     const accessToken = fileSystem.getAccessToken(state);
     const path = getPath(state);
     const result = await load({ path, accessToken });
-    dispatch(currentNode.update(result));
+    dispatch(
+      currentNode.update({
+        ...result,
+        hasPendingChanges: false
+      })
+    );
   } catch (err) {
     dispatch(
       errors.push({ error: err, description: "loading data from Dropbox" })

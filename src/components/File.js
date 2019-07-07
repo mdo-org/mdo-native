@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { View, FlatList, RefreshControl } from "react-native";
+import { Alert, View, FlatList, RefreshControl } from "react-native";
 import Header from "../redux/containers/Header";
 import Block from "./Block";
 
@@ -14,10 +14,10 @@ export default class File extends React.Component {
   }
 
   componentDidMount() {
-    this.refresh();
+    this.load();
   }
 
-  refresh() {
+  load() {
     const { contents, onRefresh } = this.props;
     if (!contents) onRefresh();
   }
@@ -68,6 +68,23 @@ export default class File extends React.Component {
     this.setState({ activeIndex: null, activeIsEditing: false });
   }
 
+  discardChanges() {
+    const { onRefresh } = this.props;
+    Alert.alert(
+      "Discard Changes",
+      "Are you sure you want to discard all changes done to the file?",
+      [
+        { text: "Cancel", onPress: () => false, style: "cancel" },
+        {
+          text: "Discard Changes",
+          onPress: onRefresh
+        }
+      ],
+      { cancelable: true }
+    );
+    this.setState({ activeIndex: null, activeIsEditing: false });
+  }
+
   async saveAndRefresh() {
     const { onRefresh } = this.props;
     await this.save();
@@ -75,16 +92,16 @@ export default class File extends React.Component {
   }
 
   renderHeader() {
-    const { path } = this.props;
-    return (
-      <Header
-        subtitle={path}
-        menuItems={[
-          { title: "Run MDo", onPress: () => this.runMDo() },
-          { title: "Save", onPress: () => this.save() }
-        ]}
-      />
-    );
+    const { path, hasPendingChanges } = this.props;
+    const menuItems = [{ title: "Run MDo", onPress: () => this.runMDo() }];
+    if (hasPendingChanges) {
+      menuItems.push({ title: "Save", onPress: () => this.save() });
+      menuItems.push({
+        title: "Discard Changes",
+        onPress: () => this.discardChanges()
+      });
+    }
+    return <Header subtitle={path} menuItems={menuItems} />;
   }
 
   renderContent() {
@@ -138,6 +155,8 @@ File.defaultProps = {
 File.propTypes = {
   path: PropTypes.string.isRequired,
   contents: PropTypes.arrayOf(PropTypes.string),
+  hasPendingChanges: PropTypes.bool.isRequired,
+
   onRunMDo: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   onRefresh: PropTypes.func.isRequired,

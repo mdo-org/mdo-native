@@ -4,7 +4,8 @@ import File from "../../components/File";
 
 const mapStateToProps = state => ({
   path: currentNode.getPath(state),
-  contents: currentNode.getContents(state)
+  contents: currentNode.getContents(state),
+  hasPendingChanges: currentNode.hasPendingChanges(state)
 });
 
 const mapDispatchToProps = dispatch => ({
