@@ -18,13 +18,13 @@ const refresh = () => async (dispatch, getState) => {
   const state = getState();
 
   if (loading.isLoading(state)) {
-    console.warn("App is loading. refresh() call ignored.");
+    console.log("App is loading. refresh() call ignored.");
     return;
   }
 
   const load = getLoadFunction(state);
   if (!load) {
-    console.warn(`Cannot load file with type: ${getType(state)}`);
+    console.log(`Cannot load file with type: ${getType(state)}`);
     return;
   }
 

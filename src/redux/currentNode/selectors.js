@@ -10,6 +10,10 @@ export function isRoot(state) {
   return !!(state.currentNode && state.currentNode.path === "");
 }
 
+export function hasPendingChanges(state) {
+  return !!(state.currentNode && state.currentNode.hasPendingChanges);
+}
+
 export function getPath(state) {
   if (!state.currentNode) return null;
   return state.currentNode.path;

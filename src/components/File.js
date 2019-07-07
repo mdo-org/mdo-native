@@ -62,6 +62,12 @@ export default class File extends React.Component {
     this.setState({ activeIndex: null });
   }
 
+  async saveAndRefresh() {
+    const { onRefresh } = this.props;
+    await this.save();
+    onRefresh();
+  }
+
   renderHeader() {
     const { path } = this.props;
     return (
@@ -73,7 +79,7 @@ export default class File extends React.Component {
   }
 
   renderContent() {
-    const { contents, onRefresh, onUpdateBlockText } = this.props;
+    const { contents, onUpdateBlockText } = this.props;
     const { activeIndex, activeIsEditing } = this.state;
     return (
       <FlatList
@@ -97,7 +103,10 @@ export default class File extends React.Component {
           );
         }}
         refreshControl={
-          <RefreshControl refreshing={false} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => this.saveAndRefresh()}
+          />
         }
       />
     );

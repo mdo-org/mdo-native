@@ -3,7 +3,7 @@ import slice from "./slice";
 import fileSystem from "../fileSystem";
 import loading from "../loading";
 import errors from "../errors";
-import { getPath, getContents, getRev } from "./selectors";
+import { getPath, getContents, getRev, hasPendingChanges } from "./selectors";
 
 const currentNode = slice.actions;
 
@@ -11,7 +11,12 @@ const save = () => async (dispatch, getState) => {
   const state = getState();
 
   if (loading.isLoading(state)) {
-    console.warn("App is loading. save() call ignored.");
+    console.log("App is loading. save() call ignored.");
+    return;
+  }
+
+  if (!hasPendingChanges(state)) {
+    console.log("No pending changes. save() call ignored.");
     return;
   }
 

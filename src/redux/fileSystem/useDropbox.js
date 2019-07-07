@@ -10,7 +10,7 @@ const useDropbox = () => async (dispatch, getState) => {
   const state = getState();
 
   if (loading.isLoading(state)) {
-    console.warn("App is loading. Ignored useDropbox() call.");
+    console.log("App is loading. Ignored useDropbox() call.");
     return;
   }
 
