@@ -83,7 +83,7 @@ class Header extends React.Component {
     return (
       <Appbar.Header>
         {this.renderBackButton()}
-        <Appbar.Content title="MDo-Native" subtitle={subtitle} />
+        <Appbar.Content title="MDo" subtitle={subtitle} />
         {this.renderMenu()}
       </Appbar.Header>
     );
