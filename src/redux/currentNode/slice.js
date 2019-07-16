@@ -84,6 +84,18 @@ export default createSlice({
         ].filter(Boolean),
         hasPendingChanges: true
       };
+    },
+    onNewBlockBelow: (state, { payload: { index } }) => {
+      const { contents } = state;
+      return {
+        ...state,
+        contents: [
+          ...contents.slice(0, index + 1),
+          "- [ ] ",
+          ...contents.slice(index + 1)
+        ].filter(Boolean),
+        hasPendingChanges: true
+      };
     }
   },
   extraReducers: {

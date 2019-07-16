@@ -11,6 +11,7 @@ export default class Block extends React.Component {
       onEditToggle,
       onMoveUp,
       onMoveDown,
+      onNewBlockBelow,
       active
     } = this.props;
     const [firstLine, ...rest] = text.split("\n");
@@ -25,6 +26,7 @@ export default class Block extends React.Component {
           <Button icon="create" onPress={onEditToggle} />
           <Button icon="arrow-upward" onPress={onMoveUp} />
           <Button icon="arrow-downward" onPress={onMoveDown} />
+          <Button icon="keyboard-return" onPress={onNewBlockBelow} />
         </Card.Actions>
       );
     }
@@ -41,7 +43,14 @@ export default class Block extends React.Component {
   }
 
   renderEditMode() {
-    const { text, onEditToggle, onChangeText } = this.props;
+    const {
+      text,
+      onEditToggle,
+      onChangeText,
+      onMoveUp,
+      onMoveDown,
+      onNewBlockBelow
+    } = this.props;
     return (
       <Card>
         <Card.Content>
@@ -53,7 +62,10 @@ export default class Block extends React.Component {
           />
         </Card.Content>
         <Card.Actions>
-          <Button onPress={onEditToggle} icon="arrow-back" />
+          <Button icon="create" onPress={onEditToggle} />
+          <Button icon="arrow-upward" onPress={onMoveUp} />
+          <Button icon="arrow-downward" onPress={onMoveDown} />
+          <Button icon="keyboard-return" onPress={onNewBlockBelow} />
         </Card.Actions>
       </Card>
     );
@@ -80,5 +92,6 @@ Block.propTypes = {
   onEditToggle: PropTypes.func.isRequired, // toggle card between editable/not-editable
   onChangeText: PropTypes.func.isRequired,
   onMoveUp: PropTypes.func.isRequired,
-  onMoveDown: PropTypes.func.isRequired
+  onMoveDown: PropTypes.func.isRequired,
+  onNewBlockBelow: PropTypes.func.isRequired
 };

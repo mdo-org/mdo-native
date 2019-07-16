@@ -27,6 +27,7 @@ export default {
   updateBlockText: slice.actions.updateBlockText,
   moveBlockUp: slice.actions.moveBlockUp,
   moveBlockDown: slice.actions.moveBlockDown,
+  onNewBlockBelow: slice.actions.onNewBlockBelow,
   runMDo,
   save,
 

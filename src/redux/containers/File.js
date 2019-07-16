@@ -18,7 +18,8 @@ const mapDispatchToProps = dispatch => ({
   onUpdateBlockText: (index, text) =>
     dispatch(currentNode.updateBlockText({ index, text })),
   onMoveBlockUp: index => dispatch(currentNode.moveBlockUp({ index })),
-  onMoveBlockDown: index => dispatch(currentNode.moveBlockDown({ index }))
+  onMoveBlockDown: index => dispatch(currentNode.moveBlockDown({ index })),
+  onNewBlockBelow: index => dispatch(currentNode.onNewBlockBelow({ index }))
 });
 
 export default connect(

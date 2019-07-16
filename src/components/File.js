@@ -21,6 +21,15 @@ export default class File extends React.Component {
     this.load();
   }
 
+  onNewBlockBelow(index) {
+    const { onNewBlockBelow } = this.props;
+    onNewBlockBelow(index);
+    this.setState({
+      activeIndex: index + 1,
+      activeIsEditing: true
+    });
+  }
+
   load() {
     const { isLoading, contents, onRefresh } = this.props;
     if (!contents && !isLoading) onRefresh();
@@ -128,6 +137,7 @@ export default class File extends React.Component {
               onEditToggle={() => this.toggleEditBlock(index)}
               onMoveUp={() => this.moveBlockUp(index)}
               onMoveDown={() => this.moveBlockDown(index)}
+              onNewBlockBelow={() => this.onNewBlockBelow(index)}
               active={active}
               editMode={editMode}
             />
@@ -170,5 +180,6 @@ File.propTypes = {
   onToggleCheckbox: PropTypes.func.isRequired,
   onUpdateBlockText: PropTypes.func.isRequired,
   onMoveBlockUp: PropTypes.func.isRequired,
-  onMoveBlockDown: PropTypes.func.isRequired
+  onMoveBlockDown: PropTypes.func.isRequired,
+  onNewBlockBelow: PropTypes.func.isRequired
 };
