@@ -5,7 +5,8 @@ import currentNode from "../currentNode";
 
 const mapStateToProps = state => ({
   includeBackButton: !currentNode.isRoot(state),
-  includeLogoutButton: fileSystem.isMounted(state)
+  includeLogoutButton: fileSystem.isMounted(state),
+  hasPendingChanges: currentNode.hasPendingChanges(state)
 });
 
 const mapDispatchToProps = dispatch => ({

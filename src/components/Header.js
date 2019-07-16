@@ -11,6 +11,26 @@ class Header extends React.Component {
     };
   }
 
+  onGoBack() {
+    const { hasPendingChanges, onGoBack } = this.props;
+    if (hasPendingChanges) {
+      Alert.alert(
+        "Pending Changes",
+        "Are you sure you want to discard all changes done to the file?",
+        [
+          { text: "Cancel", onPress: () => false, style: "cancel" },
+          {
+            text: "Discard Changes",
+            onPress: onGoBack
+          }
+        ],
+        { cancelable: true }
+      );
+      return;
+    }
+    onGoBack();
+  }
+
   openMenu() {
     this.setState({ menuVisible: true });
   }
@@ -74,7 +94,7 @@ class Header extends React.Component {
   renderBackButton() {
     const { includeBackButton, onGoBack } = this.props;
     return includeBackButton && onGoBack ? (
-      <Appbar.BackAction onPress={onGoBack} />
+      <Appbar.BackAction onPress={() => this.onGoBack()} />
     ) : null;
   }
 
@@ -114,6 +134,7 @@ Header.propTypes = {
   onGoBack: PropTypes.func,
   includeLogoutButton: PropTypes.bool,
   onLogout: PropTypes.func,
+  hasPendingChanges: PropTypes.bool.isRequired,
 
   // other
   theme: PropTypes.shape({
