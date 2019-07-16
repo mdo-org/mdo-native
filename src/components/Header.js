@@ -135,7 +135,7 @@ Header.propTypes = {
   onGoBack: PropTypes.func,
   includeLogoutButton: PropTypes.bool,
   onLogout: PropTypes.func,
-  hasPendingChanges: PropTypes.bool.isRequired,
+  hasPendingChanges: PropTypes.bool,
 
   // other
   theme: PropTypes.shape({
