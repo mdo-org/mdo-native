@@ -139,7 +139,8 @@ Header.propTypes = {
   // other
   theme: PropTypes.shape({
     colors: PropTypes.shape({
-      primary: PropTypes.string.isRequired
+      primary: PropTypes.string.isRequired,
+      surface: PropTypes.string.isRequired
     }).isRequired
   }).isRequired
 };
