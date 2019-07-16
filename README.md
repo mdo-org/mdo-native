@@ -21,6 +21,12 @@ React Native app for [MDo](https://mdo-org.github.io/mdo/).
 
 Note: to "shake" your android virtual device, press `Ctrl + m` (on Linux). You'll see the React Native dev menu pop up.
 
+### Running the app on a virtual iOS device
+
+1. Install [Xcode through the Apple App Store](https://apps.apple.com/app/xcode/id497799835)
+2. Open a simulator from `Xcode -> Open Developer Tool -> Simulator`
+3. On the terminal tab where you started the expo server, type `i`. The expo server will then install Expo on the virtual device and start your app.
+
 ### Debugging
 
 Follow Expo's instructions for [Debugging Redux](https://docs.expo.io/versions/v33.0.0/workflow/debugging/#debugging-redux).

@@ -116,7 +116,8 @@ Header.defaultProps = {
   onGoBack: null,
   includeLogoutButton: false,
   onLogout: null,
-  menuItems: []
+  menuItems: [],
+  hasPendingChanges: false
 };
 
 Header.propTypes = {
