@@ -23,6 +23,7 @@ export default {
   refresh,
 
   // file-specific actions
+  toggleCheckbox: slice.actions.toggleCheckbox,
   updateBlockText: slice.actions.updateBlockText,
   moveBlockUp: slice.actions.moveBlockUp,
   moveBlockDown: slice.actions.moveBlockDown,

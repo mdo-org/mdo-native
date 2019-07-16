@@ -1,7 +1,10 @@
 /* eslint no-param-reassign:[0] */
 
 import { createSlice } from "redux-starter-kit";
+import { BlockHelper } from "@mdo-org/mdo-core";
 import fileSystem from "../fileSystem";
+
+const { COMPLETE_TASK, INCOMPLETE_TASK } = BlockHelper.TYPES;
 
 function getParentDir(path) {
   return path
@@ -9,6 +12,13 @@ function getParentDir(path) {
     .slice(0, -1)
     .join("/");
 }
+
+// when the toggleCheckbox action is executed, return the new type for the block
+const nextType = currentType => {
+  if (currentType === COMPLETE_TASK) return INCOMPLETE_TASK;
+  if (currentType === INCOMPLETE_TASK) return COMPLETE_TASK;
+  return currentType;
+};
 
 export default createSlice({
   slice: "currentNode",
@@ -25,6 +35,21 @@ export default createSlice({
         path: getParentDir(state.path),
         type: "directory",
         contents: null
+      };
+    },
+    toggleCheckbox: (state, { payload: { index } }) => {
+      let pendingChanges = state.hasPendingChanges;
+      return {
+        ...state,
+        contents: state.contents.map((oldText, idx) => {
+          if (idx !== index) return oldText;
+          const block = BlockHelper.fromString(oldText);
+          block.type = nextType(block.type);
+          const newText = BlockHelper.toString(block);
+          pendingChanges = pendingChanges || oldText !== newText;
+          return newText;
+        }),
+        hasPendingChanges: pendingChanges
       };
     },
     updateBlockText: (state, { payload: { index, text } }) => ({

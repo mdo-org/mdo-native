@@ -109,7 +109,7 @@ export default class File extends React.Component {
   }
 
   renderContent() {
-    const { contents, onUpdateBlockText } = this.props;
+    const { contents, onToggleCheckbox, onUpdateBlockText } = this.props;
     const { activeIndex, activeIsEditing } = this.state;
     return (
       <FlatList
@@ -124,6 +124,7 @@ export default class File extends React.Component {
               text={item}
               onChangeText={newText => onUpdateBlockText(index, newText)}
               onToggle={() => this.toggleBlock(index)}
+              onCheckboxToggle={() => onToggleCheckbox(index)}
               onEditToggle={() => this.toggleEditBlock(index)}
               onMoveUp={() => this.moveBlockUp(index)}
               onMoveDown={() => this.moveBlockDown(index)}
@@ -166,6 +167,7 @@ File.propTypes = {
   onRunMDo: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   onRefresh: PropTypes.func.isRequired,
+  onToggleCheckbox: PropTypes.func.isRequired,
   onUpdateBlockText: PropTypes.func.isRequired,
   onMoveBlockUp: PropTypes.func.isRequired,
   onMoveBlockDown: PropTypes.func.isRequired

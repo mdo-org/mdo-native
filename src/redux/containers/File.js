@@ -14,6 +14,7 @@ const mapDispatchToProps = dispatch => ({
   onRunMDo: () => dispatch(currentNode.runMDo()),
   onSave: () => dispatch(currentNode.save()),
   onRefresh: () => dispatch(currentNode.refresh()),
+  onToggleCheckbox: index => dispatch(currentNode.toggleCheckbox({ index })),
   onUpdateBlockText: (index, text) =>
     dispatch(currentNode.updateBlockText({ index, text })),
   onMoveBlockUp: index => dispatch(currentNode.moveBlockUp({ index })),

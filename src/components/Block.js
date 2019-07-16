@@ -7,6 +7,7 @@ export default class Block extends React.Component {
     const {
       text,
       onToggle,
+      onCheckboxToggle,
       onEditToggle,
       onMoveUp,
       onMoveDown,
@@ -20,6 +21,7 @@ export default class Block extends React.Component {
       body = rest.length ? <Paragraph>{rest.join("\n")}</Paragraph> : null;
       actions = (
         <Card.Actions>
+          <Button icon="check-box" onPress={onCheckboxToggle} />
           <Button icon="create" onPress={onEditToggle} />
           <Button icon="arrow-upward" onPress={onMoveUp} />
           <Button icon="arrow-downward" onPress={onMoveDown} />
@@ -73,8 +75,9 @@ Block.propTypes = {
   text: PropTypes.string.isRequired,
   active: PropTypes.bool,
   editMode: PropTypes.bool,
-  onToggle: PropTypes.func.isRequired,
-  onEditToggle: PropTypes.func.isRequired,
+  onToggle: PropTypes.func.isRequired, // toggle card between open/closed
+  onCheckboxToggle: PropTypes.func.isRequired, // toggle to-do between checked/unchecked
+  onEditToggle: PropTypes.func.isRequired, // toggle card between editable/not-editable
   onChangeText: PropTypes.func.isRequired,
   onMoveUp: PropTypes.func.isRequired,
   onMoveDown: PropTypes.func.isRequired
