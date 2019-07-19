@@ -24,7 +24,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.alexishevia.mdo"
+      "bundleIdentifier": "com.alexishevia.mdo",
+      "buildNumber": "2"
     },
     "description": "React Native app for MDo.\n\nMDo is a free, open source to-do app built to live inside your editor.",
     "githubUrl": "https://github.com/mdo-org/mdo-native"
