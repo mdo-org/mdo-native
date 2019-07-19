@@ -53,6 +53,30 @@ let g:syntastic_javascript_eslint_exec='/path/to/mdo-native/node_modules/.bin/es
 
 MDo Native is using [React Native Paper](https://callstack.github.io/react-native-paper/) as the UI library.
 
+## Architecture
+
+MDoNative is built as a Redux app, using the [Redux Starter Kit](https://redux-starter-kit.js.org)
+
+We use the following folder structure
+
+```
+src/                    // top-level directory for javascript files
+  components/           // all "presentational components" (no redux) live here
+  lib1/                 // non-redux libraries live in their own directory below `src/`
+  lib2/                 // example: "Dropbox/", "MDo/"
+  redux/
+      reducer.js        // this is your "root" reducer. Runs `combineReducer()` on your other reducers.
+      containers/       // all "container components" live here. They have the same name as their "presentational" counterpart.
+      slice1/           // every "slice" owns a field in the redux state tree. The dir name should match the field name.
+      slice2/           // slice folders should export: a single `reducer`, one or more actions, and one or more selectors
+```
+
+Some rules we follow:
+
+- Presentational components have no concept of Redux, they receive all data as props.
+- Container components are not allowed to query the Redux state directly. They should always use selectors.
+  This allows modifying the state structure without breaking components.
+
 ## Publishing the app
 
 I'm using the expo cli to publish the app.
