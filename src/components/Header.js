@@ -1,7 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Alert } from "react-native";
+import { Alert, Linking } from "react-native";
 import { Appbar, IconButton, Menu, withTheme } from "react-native-paper";
+
+const PRIVACY_POLICY = {
+  title: "Privacy Policy",
+  onPress: () =>
+    Linking.openURL(
+      "https://github.com/mdo-org/mdo-native/blob/master/legal/privacy_policy.md"
+    )
+};
 
 class Header extends React.Component {
   constructor(props) {
@@ -61,7 +69,7 @@ class Header extends React.Component {
     const { theme, menuItems, includeLogoutButton, onLogout } = this.props;
     const { menuVisible } = this.state;
 
-    const allItems = [...menuItems];
+    const allItems = [...menuItems, PRIVACY_POLICY];
     if (includeLogoutButton && onLogout) {
       allItems.push({ title: "Log Out", onPress: () => this.logout() });
     }

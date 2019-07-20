@@ -15,6 +15,7 @@ The app does use third party services that may collect information used to ident
 Link to privacy policy of third party service providers used by the app
 
 - [Dropbox](https://www.dropbox.com/en_GB/privacy)
+- [Expo](https://expo.io/privacy)
 
 **Log Data**
 
