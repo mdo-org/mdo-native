@@ -31,7 +31,7 @@
     "jest": "^24.8.0",
     "lint-staged": "^8.1.7",
     "prettier": "^1.17.1",
-    "ws": "^7.0.0"
+    "ws": "^7.4.6"
   },
   "scripts": {
     "start": "expo start",
