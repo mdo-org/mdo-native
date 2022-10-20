@@ -5,7 +5,7 @@
     "@mdo-org/mdo-flow-live-in-the-moment": "^0.2.10",
     "buffer": "^5.2.1",
     "dropbox": "^4.0.17",
-    "expo": "^33.0.0",
+    "expo": "^46.0.16",
     "luxon": "^1.16.0",
     "prop-types": "^15.7.2",
     "react": "16.8.3",
